@@ -1,5 +1,4 @@
 use std::io::{self, Write};
-use std::path::Path;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
@@ -93,7 +92,7 @@ fn list_songs(song_library: &Arc<Mutex<SongLibrary>>) {
             }
 
             for song in library.songs() {
-                println!("- {} | {} | {}", song.id, song.name, song.path);
+                println!("- {} | {}", song.id, format_song_summary(song));
             }
         }
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
@@ -111,7 +110,7 @@ fn list_active_songs(song_library: &Arc<Mutex<SongLibrary>>) {
             }
 
             for song in active_songs {
-                println!("- {} | {} | {}", song.id, song.name, song.path);
+                println!("- {} | {}", song.id, format_song_summary(song));
             }
         }
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
@@ -119,31 +118,11 @@ fn list_active_songs(song_library: &Arc<Mutex<SongLibrary>>) {
 }
 
 fn add_song(song_library: &Arc<Mutex<SongLibrary>>, path: &str) {
-    let file_path = Path::new(path);
-
-    if !file_path.exists() {
-        eprintln!("✖ Error: File not found: {}", path);
-        return;
-    }
-
-    if !file_path.is_file() {
-        eprintln!("✖ Error: Path is not a file: {}", path);
-        return;
-    }
-
-    let song_name = match file_path.file_name().and_then(|name| name.to_str()) {
-        Some(name) => name.to_string(),
-        None => {
-            eprintln!("✖ Error: Invalid file name.");
-            return;
-        }
-    };
-
     match song_library.lock() {
-        Ok(mut library) => {
-            let song = library.add_song(song_name, path.to_string());
-            println!("✔ Song added successfully: {} ({})", song.name, song.id);
-        }
+        Ok(mut library) => match library.add_song(path) {
+            Ok(song) => println!("✔ Song added: {} ({})", song.title, song.id),
+            Err(error) => eprintln!("✖ Error: {}", error),
+        },
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
     }
 }
@@ -151,7 +130,7 @@ fn add_song(song_library: &Arc<Mutex<SongLibrary>>, path: &str) {
 fn delete_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
     match song_library.lock() {
         Ok(mut library) => match library.delete_song(song_id) {
-            Ok(song) => println!("✔ Song removed: {} ({})", song.name, song.id),
+            Ok(song) => println!("✔ Song removed: {} ({})", song.title, song.id),
             Err(error) => eprintln!("✖ Error: {}", error),
         },
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
@@ -161,9 +140,24 @@ fn delete_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
 fn set_active_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
     match song_library.lock() {
         Ok(mut library) => match library.set_active_song(song_id) {
-            Ok(song) => println!("✔ Active song set: {} ({})", song.name, song.id),
+            Ok(song) => println!("✔ Active song set: {} ({})", song.title, song.id),
             Err(error) => eprintln!("✖ Error: {}", error),
         },
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
     }
+}
+
+fn format_song_summary(song: &crate::songs::Song) -> String {
+    let artist = song.artist.as_deref().unwrap_or("Unknown artist");
+    let album = song.album.as_deref().unwrap_or("Unknown album");
+    let genre = song.genre.as_deref().unwrap_or("Unknown genre");
+    let duration = song
+        .duration
+        .map(|seconds| format!("{}s", seconds))
+        .unwrap_or_else(|| "Unknown duration".to_string());
+
+    format!(
+        "{} | artist: {} | album: {} | genre: {} | duration: {} | path: {}",
+        song.title, artist, album, genre, duration, song.file_path
+    )
 }
