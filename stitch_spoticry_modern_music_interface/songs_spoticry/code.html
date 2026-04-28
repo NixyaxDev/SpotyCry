@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SpotiCry - Songs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2c2a27",
+                        "surface-container": "#211f1c",
+                        "on-primary": "#3c2f12",
+                        "inverse-surface": "#e7e1dd",
+                        "inverse-primary": "#6c5c3c",
+                        "surface": "#151310",
+                        "on-tertiary-fixed-variant": "#663852",
+                        "primary-fixed": "#f7e0b7",
+                        "surface-container-low": "#1d1b18",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#adcfb7",
+                        "background": "#151310",
+                        "secondary-container": "#2f4d3b",
+                        "tertiary-fixed": "#ffd8ea",
+                        "primary-fixed-dim": "#d9c49c",
+                        "on-secondary-container": "#9cbda6",
+                        "on-primary-fixed-variant": "#534526",
+                        "on-background": "#e7e1dd",
+                        "on-primary-container": "#58492a",
+                        "tertiary": "#ffc8e3",
+                        "inverse-on-surface": "#32302d",
+                        "on-surface-variant": "#cfc5b8",
+                        "primary": "#ebd5ac",
+                        "surface-container-highest": "#373431",
+                        "on-tertiary-fixed": "#340c25",
+                        "on-primary-fixed": "#251a02",
+                        "on-secondary-fixed": "#022112",
+                        "on-tertiary": "#4c223b",
+                        "primary-container": "#ceb992",
+                        "surface-bright": "#3b3936",
+                        "tertiary-container": "#e7aac9",
+                        "on-secondary-fixed-variant": "#2f4d3b",
+                        "outline": "#989084",
+                        "on-error": "#690005",
+                        "surface-dim": "#151310",
+                        "surface-container-lowest": "#100e0b",
+                        "on-tertiary-container": "#6b3c57",
+                        "outline-variant": "#4c463c",
+                        "tertiary-fixed-dim": "#f3b4d4",
+                        "on-secondary": "#183626",
+                        "secondary-fixed": "#c8ebd3",
+                        "secondary": "#adcfb7",
+                        "surface-tint": "#d9c49c",
+                        "on-surface": "#e7e1dd",
+                        "surface-variant": "#373431"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "xl": "64px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(206, 185, 146, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(206, 185, 146, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 border-r border-white/5 shadow-xl shadow-black/20 bg-slate-800 dark:bg-[#585563] z-50">
+<div class="flex flex-col h-full py-8">
+<div class="px-6 mb-8">
+<h1 class="text-2xl font-bold tracking-tighter text-[#CEB992]">SpotiCry</h1>
+<p class="font-label-sm text-label-sm text-[#CEB992]/60 mt-1">Emotional Sanctuary</p>
+</div>
+<ul class="flex-1 space-y-2 mt-4">
+<li>
+<a class="flex items-center gap-4 bg-[#5B2E48] text-[#CEB992] rounded-lg px-4 py-3 mx-2 scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined fill-icon" data-icon="music_note">music_note</span>
+<span class="font-sans text-sm tracking-wide">Songs</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-[#CEB992]/60 hover:text-[#CEB992] px-4 py-3 mx-2 transition-colors hover:bg-[#5B2E48]/20 hover:scale-[1.02] transition-all scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="queue_music">queue_music</span>
+<span class="font-sans text-sm tracking-wide">Playlists</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-4 text-[#CEB992]/60 hover:text-[#CEB992] px-4 py-3 mx-2 transition-colors hover:bg-[#5B2E48]/20 hover:scale-[1.02] transition-all scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="play_circle">play_circle</span>
+<span class="font-sans text-sm tracking-wide">Now Playing</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-64 relative h-screen overflow-y-auto pb-32">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-0 md:left-64 h-20 z-40 bg-transparent backdrop-blur-md flex items-center justify-between px-6 md:px-10">
+<!-- Search Bar -->
+<div class="flex-1 max-w-md relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#CEB992]/50 group-focus-within:text-[#73937E] transition-colors">search</span>
+<input class="w-full bg-[#151310]/80 md:bg-[#373431]/50 border-none rounded-full py-3 pl-12 pr-4 font-body-md text-body-md text-on-surface placeholder-[#CEB992]/50 focus:ring-2 focus:ring-[#73937E] transition-all" placeholder="Search your feelings..." type="text"/>
+</div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-4 ml-4">
+<button class="text-[#CEB992]/70 hover:text-[#73937E] smooth transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-[#CEB992]/70 hover:text-[#73937E] smooth transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-[#CEB992]/70 hover:text-[#73937E] smooth transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Content Padding -->
+<div class="pt-24 px-6 md:px-10 max-w-7xl mx-auto space-y-xl">
+<!-- Header Section -->
+<section class="flex items-end justify-between">
+<div>
+<h2 class="font-h1 text-h1 text-primary-container">Your Library</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">A collection of melancholy and introspection.</p>
+</div>
+<button class="bg-[#5B2E48] hover:bg-[#471323] text-[#CEB992] px-6 py-3 rounded-lg font-label-sm text-label-sm uppercase tracking-wider hover:scale-[1.02] transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">shuffle</span>
+                    Shuffle
+                </button>
+</section>
+<!-- Recently Played (Horizontal Scroll) -->
+<section class="space-y-md">
+<h3 class="font-h3 text-h3 text-primary-container">Recently Echoed</h3>
+<div class="flex overflow-x-auto pb-4 gap-6 snap-x">
+<!-- Card 1 -->
+<div class="min-w-[160px] md:min-w-[200px] flex-shrink-0 group cursor-pointer snap-start">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-surface-container-high border border-white/10">
+<img alt="Moody abstract dark clouds" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Dark moody abstract storm clouds with subtle purple hues" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvXferfpOnV9TislfSFraBF7pgTSEGXgsu-nJDTW0OAqjDxxYr-0J4mIz2aLKPMqEpPJ-8sh9OUncw07wtE0wEX2EG5_OvHeVWsSDykO49hfZosyKTaN9DlNeJqXOr6nYWujW8rNKd1Fz4o9agEmK0OBJ7K3sXHkVfZAdb1CGAVKFD2fVTRSFe0MaSmquWpgDVOAv39Fa5b-wIfk133W_O4kGOh4MnU7n7O4Ao1FXy52E0Z6YZimYn4cfVGlfqy46g9KCk4AJk3xI"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-white fill-icon">play_circle</span>
+</div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface truncate">Midnight Thoughts</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Ethereal Silence</p>
+</div>
+<!-- Card 2 -->
+<div class="min-w-[160px] md:min-w-[200px] flex-shrink-0 group cursor-pointer snap-start">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-surface-container-high border border-white/10">
+<img alt="Foggy forest path" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Dense foggy pine forest path with muted green and gray tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRSQkfeHiFC0fPrwJlx0Pn4jUyz_HIQQC3NP-0uV6ZDrf-qx_TvASphmHgDJjWT8J15k7nyILbJKD06YEKA_yqvVcxXtMRYS6hDZjFp-TOSlFfcGcUv-i9UK8iC6EWJLj-SklsjvYpJHzhzqCu0wP_bDCmMN7rjNt-aamHvJOtvynvwbIFteBv_PWaKfU73l362hZq6GPyvG_qooLPnk1DS0qcF4BBgRh7Mo5NBuqCMtiObsyJyfNkWraoFrnS_fQtTKoh_7fSOJo"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-white fill-icon">play_circle</span>
+</div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface truncate">Lost in the Woods</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">The Wanderer</p>
+</div>
+<!-- Card 3 -->
+<div class="min-w-[160px] md:min-w-[200px] flex-shrink-0 group cursor-pointer snap-start">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-surface-container-high border border-white/10">
+<img alt="Rain drops on window" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Close up of rain drops on a glass window against a dark city background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE8xZ9v_oSA6IFn8-iEBFIKwo1zj4s_noYxqRsuOAEeJiY0_mMWwW_LjqaGX8_SNX64zDFKLW3RZq_iR904oZwykp_s_ky9BrxyeumAetS-xQJDfKw-xTMUKVcEQ74y2fJwtkZKcfA7KFOOnS-Jqr9pFgi0NABVfIxGvPf6v51mFXTUPd-5pwYuiFz67sGOZVshPTcEPDlA6sUkHhYr9GBJlqHHhlaYqg0yn-erDyadFaERxTyXh-O6Lz3X0kVnQxbm6E3wPaZkAI"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-white fill-icon">play_circle</span>
+</div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface truncate">City Tears</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Neon Rain</p>
+</div>
+<!-- Card 4 -->
+<div class="min-w-[160px] md:min-w-[200px] flex-shrink-0 group cursor-pointer snap-start">
+<div class="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-surface-container-high border border-white/10">
+<img alt="Abstract dark waves" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Abstract dark ocean waves cresting under a moonlight glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB1VhFMxZ9mP64DZMb0NUBLSm5IjqDbfpYullH-H6biJ5VKOnV3lAYlRVrbzJdkJ-Vfe8u2yztWN82pa0Gw9OoaOgFDLoyDvc5dED8rX1oP_eIY-ba-Mlzz5KOm0YGHhYSFLFzW8oscI8fOzL5M_XN-IlQIxfn-_xDa_1ZYkzXVTicM1RBovas5VKm9Pp3w28IEDQsNvZAFBAhXTgHopSbVC_CXIR0rtMdn5_gIrpuBtAroIvU10i3LR1ziV5AXB9Q71fwrsiUEmY"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-white fill-icon">play_circle</span>
+</div>
+</div>
+<h4 class="font-body-md text-body-md text-on-surface truncate">Ocean of Sorrow</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">Deep Blue</p>
+</div>
+</div>
+</section>
+<!-- Song List -->
+<section class="space-y-md">
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-white/10 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="pb-4 w-12 text-center">#</th>
+<th class="pb-4 px-4 min-w-[250px]">Title</th>
+<th class="pb-4 px-4 hidden md:table-cell">Artist</th>
+<th class="pb-4 px-4 hidden lg:table-cell">Genre</th>
+<th class="pb-4 px-4 text-right">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<!-- Row 1 -->
+<tr class="group hover:bg-[#5B2E48]/10 transition-colors border-b border-transparent hover:border-white/5 rounded-xl cursor-pointer">
+<td class="py-4 w-12 text-center text-on-surface-variant relative">
+<span class="group-hover:hidden">1</span>
+<span class="material-symbols-outlined hidden group-hover:inline-block text-primary-container fill-icon">play_arrow</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded shadow-sm overflow-hidden flex-shrink-0 border border-white/10 bg-surface-container-high">
+<img alt="Abstract minimal art" class="w-full h-full object-cover" data-alt="Minimalist abstract gradient art fading from beige to dark grey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXB5zrEW9x2rcRxQkeSxnnAVdO8yt3cZTHd0D7hXgUHyYQ6JP3uQu_foURonsXkDxq74n4JN7ylF7DSGFubl40XZiB1p52JNb-_uAQO3po29Ttp9Khs7r5xCqbg1XMfst59BDkTf0DSvanN5V4Uo0RKKTpknR4zedANrl5blPjW16TVgc1sI__UBU8uVrEpvl1j-aRx5UY_iMATuU2rYFqQm8p8DNVZ7kqU0Cfzb0nhpPDk523IHMdLwNIclWV_DqNuSaXuuX5MG0"/>
+</div>
+<div>
+<div class="text-on-surface font-medium group-hover:text-primary-container transition-colors">Fade to Black</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant md:hidden">The Void</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-on-surface-variant hidden md:table-cell">The Void</td>
+<td class="py-4 px-4 text-on-surface-variant hidden lg:table-cell">Ambient</td>
+<td class="py-4 px-4 text-right text-on-surface-variant">
+<div class="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<span class="opacity-100 group-hover:opacity-100">4:23</span>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-[#5B2E48]/10 transition-colors border-b border-transparent hover:border-white/5 rounded-xl cursor-pointer">
+<td class="py-4 w-12 text-center text-on-surface-variant relative">
+<span class="group-hover:hidden">2</span>
+<span class="material-symbols-outlined hidden group-hover:inline-block text-primary-container fill-icon">play_arrow</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded shadow-sm overflow-hidden flex-shrink-0 border border-white/10 bg-surface-container-high">
+<img alt="Dark moody piano" class="w-full h-full object-cover" data-alt="Close up of piano keys in low dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqH-5u7dpWiLE9bXgg08jgR2buCG8djHvcLCfHgFVAx39iIHrnN5mBvCvXA9hkL6rt6m2ZlIguadWOZdJHewK7IjvGXWgfWl01UAKFLE8pUBrRtb8aN6Uj5M8d3apKjFcGUjiUHZInQo_a9Ikz034_jZfLmoNEFlg2eOjOZ56PTLSlCadkk3FGOl1yat-d35_VOnGwhzavAz0K8llDjXM1zqCzgzYcknBqCzJ14PK_Ajz6FcnzjVBpOamIvLQdBo740Zzp5gCjWgE"/>
+</div>
+<div>
+<div class="text-on-surface font-medium group-hover:text-primary-container transition-colors">Echoes of You</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant md:hidden">Silent Pianist</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-on-surface-variant hidden md:table-cell">Silent Pianist</td>
+<td class="py-4 px-4 text-on-surface-variant hidden lg:table-cell">Modern Classical</td>
+<td class="py-4 px-4 text-right text-on-surface-variant">
+<div class="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<span class="opacity-100 group-hover:opacity-100">3:45</span>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-[#5B2E48]/10 transition-colors border-b border-transparent hover:border-white/5 rounded-xl cursor-pointer">
+<td class="py-4 w-12 text-center text-on-surface-variant relative">
+<span class="group-hover:hidden">3</span>
+<span class="material-symbols-outlined hidden group-hover:inline-block text-primary-container fill-icon">play_arrow</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded shadow-sm overflow-hidden flex-shrink-0 border border-white/10 bg-surface-container-high">
+<img alt="Night sky stars" class="w-full h-full object-cover" data-alt="Dark night sky filled with faint stars and nebula dust" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwdkUdJ0evNuEAfv8cuzDvKG1pun--uRXTYcHsfHr1khmSy4NxNFjES3tWHZ1kl7AKaMep8al2kw7mVDBT2jhou3FKJIvFzUqo96fL_3DxfTYhXatALx39FXORsWBVYBKO3Jgk6kc3T4A_Fypcl9SeOpl0rfc9-biLz77s89qennl5MfFTgIXfeyUQvZ99qGu0dkeKK_P8McnLdUZl-z3Qmhdcbh8ABb4PntlVE7rcSa-kMbewXd32FTck3lRhxAuNFB4OYP_FhWY"/>
+</div>
+<div>
+<div class="text-on-surface font-medium group-hover:text-primary-container transition-colors">Astral Projection</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant md:hidden">Cosmic Solitude</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-on-surface-variant hidden md:table-cell">Cosmic Solitude</td>
+<td class="py-4 px-4 text-on-surface-variant hidden lg:table-cell">Post-Rock</td>
+<td class="py-4 px-4 text-right text-on-surface-variant">
+<div class="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<span class="opacity-100 group-hover:opacity-100">6:12</span>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-[#5B2E48]/10 transition-colors border-b border-transparent hover:border-white/5 rounded-xl cursor-pointer">
+<td class="py-4 w-12 text-center text-on-surface-variant relative">
+<span class="group-hover:hidden">4</span>
+<span class="material-symbols-outlined hidden group-hover:inline-block text-primary-container fill-icon">play_arrow</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded shadow-sm overflow-hidden flex-shrink-0 border border-white/10 bg-surface-container-high">
+<img alt="Monochrome waves" class="w-full h-full object-cover" data-alt="Black and white long exposure of calm ocean water" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD714DROMrGDOafZwmlHiluoVgXJ16CAEtcGvvhqC8EmoCI6XqxN2u3sqXr-D7pXJgYtmuREhNLH8tFuTCEWuBE9rWE0QL87zsLDuh4lVbs-rW7jlb-e1H43Ll_SmMgK9jjWIc0rW8izGPoc0dLUEo2Z-O5yycENthVn_vP-K9ir_oLpyZf7gvxf-40nr5wybwf9B-XYucvAuTG6Sy_zc_Q3fWRtlWQ8g_eDLpbeejN7MbSRQfmu2XahgTNtJkPh_cMXej0ZneYJU"/>
+</div>
+<div>
+<div class="text-on-surface font-medium group-hover:text-primary-container transition-colors">Tears in Rain</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant md:hidden">Synth Dystopia</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-on-surface-variant hidden md:table-cell">Synth Dystopia</td>
+<td class="py-4 px-4 text-on-surface-variant hidden lg:table-cell">Darkwave</td>
+<td class="py-4 px-4 text-right text-on-surface-variant">
+<div class="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">favorite</span></button>
+<button class="hover:text-primary-container"><span class="material-symbols-outlined text-[20px]">add_circle</span></button>
+<span class="opacity-100 group-hover:opacity-100">4:58</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Audio Player Shell) -->
+<nav class="fixed bottom-0 left-0 w-full h-24 z-50 border-t border-white/5 bg-slate-900/95 dark:bg-[#585563] shadow-[0px_-10px_30px_rgba(71,19,35,0.15)] md:pl-64 flex items-center px-6 md:px-12">
+<!-- Now Playing Info (Left) -->
+<div class="flex-1 flex items-center gap-4 hidden sm:flex">
+<div class="w-14 h-14 rounded-md shadow-sm overflow-hidden flex-shrink-0 border border-white/10 bg-surface-container-high relative">
+<img alt="Currently playing art" class="w-full h-full object-cover" data-alt="Minimalist abstract gradient art fading from beige to dark grey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR1WQZdAj8lqukBZpZZcY_wuCGgu6_u6tVf5S_CyY_QRby8IL-7qALehTykn0GWeaWgoOiIaNT9e8b1I0g-akMJtpfaP_MaxUS16yJSimiUE3y1RnzzGEZe_yBV-dhovc3jiM1tfShCth3pj85lIsSnO7UlmB5A7OSr3CfYau85Q3Ol9_AQjeOnML-XumBkf67UxS-AtIBvPE8zQffHZJGrOAyvVANe_croQUvoyzXqMnKim4ZPQZqvILBwNoV91ubZys7-WY-MOo"/>
+<div class="absolute inset-0 bg-black/20"></div>
+</div>
+<div>
+<div class="text-on-surface font-body-md text-body-md font-medium">Fade to Black</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">The Void</div>
+</div>
+</div>
+<!-- Controls (Center) -->
+<div class="flex-1 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
+<div class="flex items-center gap-6 mb-2">
+<button class="text-[#CEB992] opacity-80 hover:scale-110 hover:text-[#73937E] transition-transform tactile spring physics on press">
+<span class="material-symbols-outlined text-[24px]" data-icon="skip_previous">skip_previous</span>
+</button>
+<button class="bg-[#5B2E48] text-white rounded-full p-4 hover:scale-105 transition-transform shadow-lg shadow-black/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[28px] fill-icon" data-icon="play_arrow">play_arrow</span>
+</button>
+<button class="text-[#CEB992] opacity-80 hover:scale-110 hover:text-[#73937E] transition-transform tactile spring physics on press">
+<span class="material-symbols-outlined text-[24px]" data-icon="skip_next">skip_next</span>
+</button>
+</div>
+<!-- Progress Bar -->
+<div class="w-full flex items-center gap-3">
+<span class="font-label-sm text-[10px] text-on-surface-variant w-8 text-right">1:24</span>
+<div class="flex-1 h-1.5 bg-black/30 rounded-full overflow-hidden relative group cursor-pointer">
+<div class="absolute top-0 left-0 h-full w-1/3 bg-[#5B2E48] rounded-full group-hover:bg-primary-container transition-colors"></div>
+</div>
+<span class="font-label-sm text-[10px] text-on-surface-variant w-8">4:23</span>
+</div>
+</div>
+<!-- Extra Controls (Right) -->
+<div class="flex-1 flex justify-end items-center gap-4 hidden md:flex">
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary-container transition-colors">
+<span class="material-symbols-outlined text-[20px]">queue_music</span>
+</button>
+<div class="flex items-center gap-2 w-24">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">volume_up</span>
+<div class="flex-1 h-1.5 bg-black/30 rounded-full overflow-hidden cursor-pointer">
+<div class="h-full w-2/3 bg-on-surface-variant rounded-full hover:bg-primary-container transition-colors"></div>
+</div>
+</div>
+</div>
+</nav>
+</body></html>

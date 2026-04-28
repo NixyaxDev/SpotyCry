@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SpotiCry - Playlist Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Be+Vietnam+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffdad6",
+                        "surface-container-high": "#2c2a27",
+                        "surface-container": "#211f1c",
+                        "on-primary": "#3c2f12",
+                        "inverse-surface": "#e7e1dd",
+                        "inverse-primary": "#6c5c3c",
+                        "surface": "#151310",
+                        "on-tertiary-fixed-variant": "#663852",
+                        "primary-fixed": "#f7e0b7",
+                        "surface-container-low": "#1d1b18",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#adcfb7",
+                        "background": "#151310",
+                        "secondary-container": "#2f4d3b",
+                        "tertiary-fixed": "#ffd8ea",
+                        "primary-fixed-dim": "#d9c49c",
+                        "on-secondary-container": "#9cbda6",
+                        "on-primary-fixed-variant": "#534526",
+                        "on-background": "#e7e1dd",
+                        "on-primary-container": "#58492a",
+                        "tertiary": "#ffc8e3",
+                        "inverse-on-surface": "#32302d",
+                        "on-surface-variant": "#cfc5b8",
+                        "primary": "#ebd5ac",
+                        "surface-container-highest": "#373431",
+                        "on-tertiary-fixed": "#340c25",
+                        "on-primary-fixed": "#251a02",
+                        "on-secondary-fixed": "#022112",
+                        "on-tertiary": "#4c223b",
+                        "primary-container": "#ceb992",
+                        "surface-bright": "#3b3936",
+                        "tertiary-container": "#e7aac9",
+                        "on-secondary-fixed-variant": "#2f4d3b",
+                        "outline": "#989084",
+                        "on-error": "#690005",
+                        "surface-dim": "#151310",
+                        "surface-container-lowest": "#100e0b",
+                        "on-tertiary-container": "#6b3c57",
+                        "outline-variant": "#4c463c",
+                        "tertiary-fixed-dim": "#f3b4d4",
+                        "on-secondary": "#183626",
+                        "secondary-fixed": "#c8ebd3",
+                        "secondary": "#adcfb7",
+                        "surface-tint": "#d9c49c",
+                        "on-surface": "#e7e1dd",
+                        "surface-variant": "#373431"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "xl": "64px",
+                        "xs": "4px",
+                        "base": "8px",
+                        "sm": "12px",
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "md": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "h3": ["Inter"],
+                        "h2": ["Inter"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "h1": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h3": ["24px", { "lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600" }],
+                        "h2": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "h1": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen antialiased flex selection:bg-primary-container selection:text-on-primary-container">
+<!-- SideNavBar (Desktop Only) -->
+<nav aria-label="Sidebar" class="hidden md:flex bg-slate-800 dark:bg-[#585563] text-rose-900 dark:text-[#5B2E48] font-sans text-sm tracking-wide h-screen w-64 fixed left-0 top-0 border-r border-white/5 shadow-xl shadow-black/20 z-50 flex-col py-8">
+<div class="px-6 mb-12">
+<h1 class="text-2xl font-bold tracking-tighter text-[#CEB992]">SpotiCry</h1>
+<p class="text-[#CEB992]/60 font-label-sm text-label-sm mt-1">Emotional Sanctuary</p>
+</div>
+<div class="flex flex-col space-y-2 flex-grow">
+<!-- Inactive Tab: Songs -->
+<a class="text-[#CEB992]/60 hover:text-[#CEB992] px-4 py-3 mx-2 transition-colors hover:bg-[#5B2E48]/20 hover:scale-[1.02] flex items-center space-x-4 rounded-lg group scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined text-xl group-hover:text-[#CEB992] transition-colors" data-icon="music_note">music_note</span>
+<span class="font-body-md text-body-md">Songs</span>
+</a>
+<!-- Active Tab: Playlists (Since we are on a Playlist Detail page) -->
+<a class="bg-[#5B2E48] text-[#CEB992] rounded-lg px-4 py-3 mx-2 flex items-center space-x-4 scale-95 active:scale-90 duration-200 shadow-md" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="queue_music" style="font-variation-settings: 'FILL' 1;">queue_music</span>
+<span class="font-body-md text-body-md font-medium">Playlists</span>
+</a>
+<!-- Inactive Tab: Now Playing -->
+<a class="text-[#CEB992]/60 hover:text-[#CEB992] px-4 py-3 mx-2 transition-colors hover:bg-[#5B2E48]/20 hover:scale-[1.02] flex items-center space-x-4 rounded-lg group scale-95 active:scale-90 duration-200" href="#">
+<span class="material-symbols-outlined text-xl group-hover:text-[#CEB992] transition-colors" data-icon="play_circle">play_circle</span>
+<span class="font-body-md text-body-md">Now Playing</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 w-full md:ml-64 pb-32 min-h-screen relative">
+<!-- TopNavBar (Desktop Only) -->
+<header class="hidden md:flex bg-transparent backdrop-blur-md text-[#5B2E48] font-sans font-medium fixed top-0 right-0 left-64 h-20 z-40 items-center justify-between px-10 border-b border-transparent transition-all duration-300">
+<div class="flex items-center w-1/3">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50" data-icon="search">search</span>
+<input class="w-full bg-surface-container-high/30 border-0 rounded-full py-2 pl-10 pr-4 text-on-surface focus:ring-2 focus:ring-[#73937E] placeholder:text-on-surface-variant/50 font-body-md text-body-md transition-shadow" placeholder="Search emotional resonance..." type="text"/>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<button class="text-[#CEB992]/70 hover:text-[#73937E] smooth transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-[#CEB992]/70 hover:text-[#73937E] smooth transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-[#CEB992]/70 hover:text-[#73937E] smooth transition-all duration-300">
+<span class="material-symbols-outlined text-3xl" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Playlist Hero Section -->
+<section class="w-full relative pt-12 md:pt-32 px-6 md:px-12 lg:px-20 pb-12">
+<!-- Background Ambient Glow -->
+<div class="absolute inset-0 top-0 h-96 bg-gradient-to-b from-surface-container-high/40 to-background pointer-events-none -z-10"></div>
+<div class="flex flex-col md:flex-row items-end gap-md md:gap-xl max-w-7xl mx-auto">
+<!-- Playlist Cover Image -->
+<div class="w-48 md:w-64 aspect-square shrink-0 rounded-xl overflow-hidden shadow-[0px_20px_40px_rgba(0,0,0,0.4)] relative ring-1 ring-white/10 group">
+<img alt="Playlist Cover" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="moody cinematic shot of rain on a car window at night with blurred city lights in deep blues and purples" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyrc6FpM7hRBM0d12cHAPehjZD7sSeArtp7vFA-iW9lpnOMPTrhrvcEnQfff0uYSkf8FY7VgowcTZE_oFt-fZ0F_MjwQJpRWq6YXmxvB0kKCsBEB0uDeq-w4OAsU444teqad-lmqA8uyiLLc_y1f8CYmbG3YJs7TFVorhjHxNG8usrAlnc6hFFZkF3XbyWlVTwMlJ_1Dutjek8H9MV9QQxOjKm4gV6qTt8Nk8Z5YeBGBOLUf8i9e2oYDSFzS999bNPWHBHlaAON04"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+</div>
+<!-- Playlist Metadata -->
+<div class="flex flex-col space-y-4 md:space-y-6 flex-1 w-full mt-6 md:mt-0">
+<div class="space-y-2">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary">Public Playlist</span>
+<h1 class="font-h1 text-h1 text-on-surface leading-tight tracking-tighter">Late Night Vibes</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-2 leading-relaxed">
+                            A curated selection of melancholic downtempo tracks for introspective midnight drives and quiet moments of reflection.
+                        </p>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant font-label-sm text-label-sm mt-auto">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="favorite">favorite</span> 24k Saves
+                        </span>
+<span>•</span>
+<span>42 Songs, 2 hr 35 min</span>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-6 pt-4">
+<button class="bg-[#73937E] hover:bg-[#5b7564] text-[#151310] font-h3 text-h3 w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-105 hover:shadow-xl transition-all duration-300">
+<span class="material-symbols-outlined text-3xl ml-1" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 group">
+<span class="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform" data-icon="favorite_border">favorite_border</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-2xl" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Tracklist Section -->
+<section class="px-6 md:px-12 lg:px-20 max-w-7xl mx-auto">
+<!-- List Header -->
+<div class="grid grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 px-4 py-2 border-b border-surface-variant/30 text-on-surface-variant font-label-sm text-label-sm tracking-wider uppercase mb-4 sticky top-20 z-10 bg-background/95 backdrop-blur-sm">
+<div class="text-center">#</div>
+<div>Title</div>
+<div class="hidden sm:block">Album</div>
+<div class="text-right flex items-center justify-end pr-8">
+<span class="material-symbols-outlined text-[18px]" data-icon="schedule">schedule</span>
+</div>
+</div>
+<!-- Tracks -->
+<div class="flex flex-col space-y-1">
+<!-- Track Item 1 -->
+<div class="group grid grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 px-4 py-3 rounded-lg hover:bg-surface-container-high/50 transition-colors items-center">
+<div class="text-center font-body-md text-body-md text-on-surface-variant relative">
+<span class="group-hover:hidden">1</span>
+<button class="hidden group-hover:flex absolute inset-0 items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<img alt="Album Art" class="w-10 h-10 rounded shadow-sm opacity-90 ring-1 ring-white/10 shrink-0" data-alt="abstract dark textured surface with subtle neon pink and blue lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaHiHowi0FPdEI7-pXiH18Sqe1oNJtSZbUlJkVHh9oypK1K3J6Ik4Sx2HOPJJ13FGCF8S02ypzvT0PbipRB3_Ly4aCUPDBIj-vALpp1XgatEUZzU8iubdLfE53MN4FVuf6kO92kBBDIZ0OfKU9qirSizTc5vZhvx09r0IX7aYkQeWu87-Tw3v0oc48tmV_GnlgwNRtzTiNAKlElT41-G0yx0Df50uOXhhm83n2tL9StOPNnGZkNJB5x-7LEZUfoqvU-f4XUjV5w1M"/>
+<div class="flex flex-col truncate">
+<span class="font-h3 text-[16px] text-on-surface truncate">Midnight Echoes</span>
+<span class="font-body-md text-[14px] text-on-surface-variant truncate">The Somber Tones</span>
+</div>
+</div>
+<div class="hidden sm:block font-body-md text-[14px] text-on-surface-variant truncate">
+                        Echoes of the City
+                    </div>
+<div class="flex items-center justify-end gap-3 text-on-surface-variant font-body-md text-[14px]">
+<button class="opacity-0 group-hover:opacity-100 hover:text-error transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="remove_circle_outline">remove_circle_outline</span>
+</button>
+<span class="w-12 text-right">4:23</span>
+</div>
+</div>
+<!-- Track Item 2 (Active/Playing State example) -->
+<div class="group grid grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 px-4 py-3 rounded-lg bg-surface-container/50 hover:bg-surface-container-high/50 transition-colors items-center relative overflow-hidden">
+<!-- Subtle active indicator line -->
+<div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3/4 bg-[#5B2E48] rounded-r-full"></div>
+<div class="text-center font-body-md text-body-md text-primary relative">
+<span class="material-symbols-outlined text-xl animate-pulse" data-icon="equalizer">equalizer</span>
+</div>
+<div class="flex items-center gap-4">
+<img alt="Album Art" class="w-10 h-10 rounded shadow-sm opacity-90 ring-1 ring-white/10 shrink-0" data-alt="moody dark forest scene obscured by thick fog with muted green and grey tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiA8P8EQZSKH2XJjoMoIk1QKWoTTtGIlai_G2UEtirVJ7TM4HyS9ubLQiNMsgMP3oyRiKOys5wu_SHyBnAng5kheU-GPD8n4p-2I-tuQWVKzT9PNf9te7zHoZacaCtDWDUPuJvxLC6QRwfxBt8TMxyvRBOb5umUxZiGssmJc7b03360MB95dcTamzYgy0a1zGPAGsGiyVW3HIH1k-m7CxKhdFIRFSamBK-7CMyBqRSInEMjNn5pOsqNTtK-mEnlk88K2QqZPursOo"/>
+<div class="flex flex-col truncate">
+<span class="font-h3 text-[16px] text-primary truncate">Rain On The Dashboard</span>
+<span class="font-body-md text-[14px] text-on-surface-variant truncate">Lofi Dreamers</span>
+</div>
+</div>
+<div class="hidden sm:block font-body-md text-[14px] text-on-surface-variant truncate">
+                        Nostalgia Trip Vol. 2
+                    </div>
+<div class="flex items-center justify-end gap-3 text-on-surface-variant font-body-md text-[14px]">
+<button class="opacity-0 group-hover:opacity-100 hover:text-error transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="remove_circle_outline">remove_circle_outline</span>
+</button>
+<span class="w-12 text-right text-primary">3:15</span>
+</div>
+</div>
+<!-- Track Item 3 -->
+<div class="group grid grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 px-4 py-3 rounded-lg hover:bg-surface-container-high/50 transition-colors items-center">
+<div class="text-center font-body-md text-body-md text-on-surface-variant relative">
+<span class="group-hover:hidden">3</span>
+<button class="hidden group-hover:flex absolute inset-0 items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center text-on-surface-variant/50 shrink-0">
+<span class="material-symbols-outlined" data-icon="music_note">music_note</span>
+</div>
+<div class="flex flex-col truncate">
+<span class="font-h3 text-[16px] text-on-surface truncate">Streetlights Blurring</span>
+<span class="font-body-md text-[14px] text-on-surface-variant truncate">Night Owl</span>
+</div>
+</div>
+<div class="hidden sm:block font-body-md text-[14px] text-on-surface-variant truncate">
+                        Single
+                    </div>
+<div class="flex items-center justify-end gap-3 text-on-surface-variant font-body-md text-[14px]">
+<button class="opacity-0 group-hover:opacity-100 hover:text-error transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="remove_circle_outline">remove_circle_outline</span>
+</button>
+<span class="w-12 text-right">5:01</span>
+</div>
+</div>
+<!-- Track Item 4 -->
+<div class="group grid grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_100px] gap-4 px-4 py-3 rounded-lg hover:bg-surface-container-high/50 transition-colors items-center opacity-70">
+<div class="text-center font-body-md text-body-md text-on-surface-variant relative">
+<span class="group-hover:hidden">4</span>
+<button class="hidden group-hover:flex absolute inset-0 items-center justify-center text-primary">
+<span class="material-symbols-outlined text-xl" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<img alt="Album Art" class="w-10 h-10 rounded shadow-sm ring-1 ring-white/10 shrink-0 grayscale" data-alt="minimalist geometric shapes in deep space grey and muted gold tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJcSC9_oDDI2cjCs36XXM6KL6b4H-BMUmuP6bLym9xxdZYQpcL-X4TQxayqu0gGD0tXxSozU-i1TzP-nvw1q5xIi4QDmj7qNxN4aMa7xle2qbV0ULwpi3MRIYT6Ou64-wkgmj0va1EWFyYaG2TpoS-6WVdPfCds_RSf7MF_MLpw1Ym4bmC910aezuzL-gz6cnTg7JUaqlcvhqSQhzNKHDu_jeONIge3f1KNaeSM2OokgMsmVcDHFfHzXSGHztecF30eulrM616SnI"/>
+<div class="flex flex-col truncate">
+<span class="font-h3 text-[16px] text-on-surface truncate">Fading Memories</span>
+<span class="font-body-md text-[14px] text-on-surface-variant truncate">The Somber Tones</span>
+</div>
+</div>
+<div class="hidden sm:block font-body-md text-[14px] text-on-surface-variant truncate">
+                        Echoes of the City
+                    </div>
+<div class="flex items-center justify-end gap-3 text-on-surface-variant font-body-md text-[14px]">
+<span class="text-[10px] uppercase tracking-widest text-on-surface-variant/50 mr-2">Unavailable</span>
+<button class="opacity-0 group-hover:opacity-100 hover:text-error transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="remove_circle_outline">remove_circle_outline</span>
+</button>
+<span class="w-12 text-right">2:58</span>
+</div>
+</div>
+</div>
+<div class="py-12 flex justify-center opacity-50">
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="expand_more">expand_more</span>
+                    Show more tracks
+                </p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Audio Player Shell) -->
+<nav aria-label="Audio Player" class="bg-slate-900/95 dark:bg-[#585563] text-[#5B2E48] text-[10px] font-medium uppercase tracking-widest text-[#CEB992] fixed bottom-0 left-0 w-full h-24 z-50 shadow-[0px_-10px_30px_rgba(71,19,35,0.15)] flex items-center justify-between px-12 transition-transform tactile spring physics on press">
+<!-- Now Playing Info (Left) -->
+<div class="flex items-center gap-4 w-1/3">
+<img alt="Currently Playing Album Art" class="w-14 h-14 rounded-md shadow-sm ring-1 ring-white/10 hidden sm:block" data-alt="moody dark forest scene obscured by thick fog with muted green and grey tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuYAgoDwFxbbCTLAtIcZ_CxHH4Pi4I5sPClluCtt3pMCFdo8OTdWwM5YxGgNuFbNRGo4Hkl8zRj08lG-b8kRF09-e9F12RCpDTCOKbWppU5AaqqelQ0WfdKaBYWbyGB-u69w5hHWZSCxX6kCVB5fr1wtQmuQvezaudZKA_htpTuKTNIThbv-F3aPkcK2I84FVIOfsPJs5ztyLMsZr0AQCBVSDQzA_fNlEHOY_j2P4fr3IGIxWdlWQVfNs_rlCi3DIwRaJF4D8P4Bk"/>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-[#CEB992] capitalize tracking-normal">Rain On The Dashboard</span>
+<span class="text-[#CEB992] opacity-80 text-xs tracking-normal capitalize">Lofi Dreamers</span>
+</div>
+</div>
+<!-- Controls (Center) -->
+<div class="flex flex-col items-center justify-center w-1/3 gap-2">
+<div class="flex items-center gap-6">
+<!-- Back -->
+<button class="text-[#CEB992] opacity-80 hover:scale-110 hover:text-[#73937E] transition-transform">
+<span class="material-symbols-outlined text-2xl" data-icon="skip_previous">skip_previous</span>
+</button>
+<!-- Play/Pause (Active State styling applied here conceptually as the primary action) -->
+<button class="bg-[#5B2E48] text-white rounded-full p-4 hover:scale-110 hover:bg-[#471323] transition-all shadow-md">
+<span class="material-symbols-outlined text-3xl" data-icon="pause" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+<!-- Forward -->
+<button class="text-[#CEB992] opacity-80 hover:scale-110 hover:text-[#73937E] transition-transform">
+<span class="material-symbols-outlined text-2xl" data-icon="skip_next">skip_next</span>
+</button>
+</div>
+<!-- Progress Bar -->
+<div class="flex items-center gap-3 w-full max-w-md hidden md:flex">
+<span class="text-[#CEB992] opacity-60 text-[10px] w-8 text-right">1:24</span>
+<div class="h-1 flex-1 bg-[#CEB992]/20 rounded-full overflow-hidden group cursor-pointer relative">
+<div class="absolute top-0 left-0 h-full bg-[#5B2E48] w-1/3 rounded-full group-hover:bg-[#73937E] transition-colors"></div>
+</div>
+<span class="text-[#CEB992] opacity-60 text-[10px] w-8">3:15</span>
+</div>
+</div>
+<!-- Extra Controls (Right) -->
+<div class="flex items-center justify-end w-1/3 gap-4 hidden lg:flex text-[#CEB992] opacity-80">
+<button class="hover:text-[#73937E] transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="queue_music">queue_music</span>
+</button>
+<div class="flex items-center gap-2 group cursor-pointer w-32">
+<span class="material-symbols-outlined text-xl group-hover:text-[#73937E] transition-colors" data-icon="volume_up">volume_up</span>
+<div class="h-1 flex-1 bg-[#CEB992]/20 rounded-full overflow-hidden">
+<div class="h-full bg-[#CEB992] w-2/3 rounded-full group-hover:bg-[#73937E] transition-colors"></div>
+</div>
+</div>
+</div>
+</nav>
+</body></html>
