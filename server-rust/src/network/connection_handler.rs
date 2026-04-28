@@ -1,11 +1,16 @@
+use std::sync::{Arc, Mutex};
+
 use futures_util::{SinkExt, StreamExt};
 use tokio::net::TcpStream;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::WebSocketStream;
 
+use crate::songs::SongLibrary;
+
 pub async fn handle_connection(
     mut websocket_stream: WebSocketStream<TcpStream>,
     client_address: String,
+    song_library: Arc<Mutex<SongLibrary>>,
 ) {
     println!("👤 Cliente conectado: {}", client_address);
 
@@ -14,7 +19,18 @@ pub async fn handle_connection(
             Ok(Message::Text(text)) => {
                 println!("📩 Mensaje recibido de {}: {}", client_address, text);
 
-                let response = format!("Servidor recibió: {}", text);
+                let song_count = match song_library.lock() {
+                    Ok(library) => library.songs().len(),
+                    Err(_) => {
+                        eprintln!("❌ Error accediendo a la biblioteca de canciones.");
+                        0
+                    }
+                };
+
+                let response = format!(
+                    "Servidor recibió: {} | canciones cargadas: {}",
+                    text, song_count
+                );
 
                 if let Err(error) = websocket_stream.send(Message::Text(response)).await {
                     eprintln!(
