@@ -43,4 +43,19 @@ impl SongLibrary {
 
         Ok(self.songs.remove(index))
     }
+
+    pub fn set_active_song(&mut self, song_id: &str) -> Result<Song, String> {
+        let target_index = self
+            .songs
+            .iter()
+            .position(|song| song.id == song_id)
+            .ok_or_else(|| "Song not found".to_string())?;
+
+        for song in &mut self.songs {
+            song.is_active = false;
+        }
+
+        self.songs[target_index].is_active = true;
+        Ok(self.songs[target_index].clone())
+    }
 }
