@@ -4,7 +4,7 @@ pub enum AdminCommand {
     List,
     Add { path: String },
     Delete { song_id: String },
-    Active,
+    Active { song_id: Option<String> },
     Exit,
 }
 
@@ -23,7 +23,15 @@ pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
     match command.to_lowercase().as_str() {
         "help" => Ok(AdminCommand::Help),
         "list" => Ok(AdminCommand::List),
-        "active" => Ok(AdminCommand::Active),
+        "active" => {
+            let song_id = parts.next().map(|value| value.to_string());
+
+            if parts.next().is_some() {
+                Err("Usage: active or active <song-id>".to_string())
+            } else {
+                Ok(AdminCommand::Active { song_id })
+            }
+        }
         "exit" => Ok(AdminCommand::Exit),
         "add" => {
             let path = parts.collect::<Vec<_>>().join(" ");

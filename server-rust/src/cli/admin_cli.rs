@@ -57,7 +57,10 @@ fn execute_command(
     match command {
         AdminCommand::Help => print_help(),
         AdminCommand::List => list_songs(song_library),
-        AdminCommand::Active => list_active_songs(song_library),
+        AdminCommand::Active { song_id } => match song_id {
+            Some(song_id) => set_active_song(song_library, &song_id),
+            None => list_active_songs(song_library),
+        },
         AdminCommand::Add { path } => add_song(song_library, &path),
         AdminCommand::Delete { song_id } => delete_song(song_library, &song_id),
         AdminCommand::Exit => {
@@ -77,6 +80,7 @@ fn print_help() {
     println!("  add <file-path>      Add a song from a local file");
     println!("  delete <song-id>     Delete a song");
     println!("  active               Show currently active songs");
+    println!("  active <song-id>     Mark a song as active");
     println!("  exit                 Stop the CLI and the server");
 }
 
@@ -148,6 +152,16 @@ fn delete_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
     match song_library.lock() {
         Ok(mut library) => match library.delete_song(song_id) {
             Ok(song) => println!("✔ Song removed: {} ({})", song.name, song.id),
+            Err(error) => eprintln!("✖ Error: {}", error),
+        },
+        Err(_) => eprintln!("✖ Error: Could not access the song library."),
+    }
+}
+
+fn set_active_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
+    match song_library.lock() {
+        Ok(mut library) => match library.set_active_song(song_id) {
+            Ok(song) => println!("✔ Active song set: {} ({})", song.name, song.id),
             Err(error) => eprintln!("✖ Error: {}", error),
         },
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
