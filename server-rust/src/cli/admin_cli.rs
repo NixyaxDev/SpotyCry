@@ -5,7 +5,7 @@ use std::thread;
 use tokio::sync::watch;
 
 use crate::cli::command::{parse_command, AdminCommand};
-use crate::songs::SongLibrary;
+use crate::songs::{SongLibrary, SongLibraryError};
 
 pub fn start_admin_cli(
     song_library: Arc<Mutex<SongLibrary>>,
@@ -130,8 +130,8 @@ fn add_song(song_library: &Arc<Mutex<SongLibrary>>, path: &str) {
 fn delete_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
     match song_library.lock() {
         Ok(mut library) => match library.delete_song(song_id) {
-            Ok(song) => println!("✔ Song removed: {} ({})", song.title, song.id),
-            Err(error) => eprintln!("✖ Error: {}", error),
+            Ok(song) => println!("✔ Song removed: {}", song.id),
+            Err(error) => eprintln!("✖ Error: {}", song_library_error_message(&error)),
         },
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
     }
@@ -141,9 +141,18 @@ fn set_active_song(song_library: &Arc<Mutex<SongLibrary>>, song_id: &str) {
     match song_library.lock() {
         Ok(mut library) => match library.set_active_song(song_id) {
             Ok(song) => println!("✔ Active song set: {} ({})", song.title, song.id),
-            Err(error) => eprintln!("✖ Error: {}", error),
+            Err(error) => eprintln!("✖ Error: {}", song_library_error_message(&error)),
         },
         Err(_) => eprintln!("✖ Error: Could not access the song library."),
+    }
+}
+
+fn song_library_error_message(error: &SongLibraryError) -> &'static str {
+    match error {
+        SongLibraryError::SongNotFound => "Song not found",
+        SongLibraryError::SongInPlayback => {
+            "Cannot delete song because it is currently being played"
+        }
     }
 }
 

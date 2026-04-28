@@ -3,6 +3,12 @@ use std::path::{Path, PathBuf};
 
 use crate::songs::Song;
 
+#[derive(Debug)]
+pub enum SongLibraryError {
+    SongNotFound,
+    SongInPlayback,
+}
+
 pub struct SongLibrary {
     songs: Vec<Song>,
     next_id: usize,
@@ -53,22 +59,26 @@ impl SongLibrary {
         Ok(song)
     }
 
-    pub fn delete_song(&mut self, song_id: &str) -> Result<Song, String> {
+    pub fn delete_song(&mut self, song_id: &str) -> Result<Song, SongLibraryError> {
+        if self.is_song_active(song_id) {
+            return Err(SongLibraryError::SongInPlayback);
+        }
+
         let index = self
             .songs
             .iter()
             .position(|song| song.id == song_id)
-            .ok_or_else(|| "Song not found".to_string())?;
+            .ok_or(SongLibraryError::SongNotFound)?;
 
         Ok(self.songs.remove(index))
     }
 
-    pub fn set_active_song(&mut self, song_id: &str) -> Result<Song, String> {
+    pub fn set_active_song(&mut self, song_id: &str) -> Result<Song, SongLibraryError> {
         let target_index = self
             .songs
             .iter()
             .position(|song| song.id == song_id)
-            .ok_or_else(|| "Song not found".to_string())?;
+            .ok_or(SongLibraryError::SongNotFound)?;
 
         for song in &mut self.songs {
             song.is_active = false;
@@ -76,6 +86,14 @@ impl SongLibrary {
 
         self.songs[target_index].is_active = true;
         Ok(self.songs[target_index].clone())
+    }
+
+    pub fn is_song_active(&self, song_id: &str) -> bool {
+        self.songs
+            .iter()
+            .find(|song| song.id == song_id)
+            .map(|song| song.is_active)
+            .unwrap_or(false)
     }
 
     fn is_duplicate(&self, normalized_path: &Path, title: &str, file_size: u64) -> bool {
