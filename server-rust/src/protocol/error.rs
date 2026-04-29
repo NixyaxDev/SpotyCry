@@ -27,4 +27,18 @@ impl ErrorBody {
             message: "Could not access the song catalog".to_string(),
         }
     }
+
+    pub fn invalid_search_criteria() -> Self {
+        Self {
+            code: "INVALID_SEARCH_CRITERIA".to_string(),
+            message: "Only title search is supported in HU-07".to_string(),
+        }
+    }
+
+    pub fn invalid_payload() -> Self {
+        Self {
+            code: "INVALID_PAYLOAD".to_string(),
+            message: "Request payload is invalid".to_string(),
+        }
+    }
 }

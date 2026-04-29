@@ -1,18 +1,27 @@
 import type { Song } from '../types/music'
 
 type PlayerBarProps = {
-  song: Song
+  song: Song | null
 }
 
 export function PlayerBar({ song }: PlayerBarProps) {
   return (
     <footer className="player-bar">
       <div className="player-now">
-        <img src={song.cover} alt={song.title} />
-        <div>
-          <strong>{song.title}</strong>
-          <span>{song.artist}</span>
-        </div>
+        {song ? (
+          <>
+            <img src={song.cover} alt={song.title} />
+            <div>
+              <strong>{song.title}</strong>
+              <span>{song.artist}</span>
+            </div>
+          </>
+        ) : (
+          <div className="player-empty-copy">
+            <strong>No song selected</strong>
+            <span>Load songs from the server to start playing</span>
+          </div>
+        )}
       </div>
 
       <div className="player-center">

@@ -8,3 +8,9 @@ pub struct ClientRequest {
     #[serde(default)]
     pub payload: Value,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct SearchSongsPayload {
+    pub criteria: String,
+    pub value: String,
+}

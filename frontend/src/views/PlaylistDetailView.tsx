@@ -2,7 +2,7 @@ import type { Song } from '../types/music'
 
 type PlaylistDetailViewProps = {
   songs: Song[]
-  selectedSong: Song
+  selectedSong: Song | null
 }
 
 const playlistCover =
@@ -52,29 +52,35 @@ export function PlaylistDetailView({
           </span>
         </div>
         <div className="track-list">
-          {songs.map((song, index) => (
-            <article
-              key={song.id}
-              className={song.id === selectedSong.id ? 'track-row is-playing' : 'track-row'}
-            >
-              <div className="track-index">
-                {song.id === selectedSong.id ? (
-                  <span className="material-symbols-outlined">equalizer</span>
-                ) : (
-                  index + 1
-                )}
-              </div>
-              <div className="track-title">
-                <img src={song.cover} alt={song.title} />
-                <div>
-                  <strong>{song.title}</strong>
-                  <span>{song.artist}</span>
+          {songs.length > 0 ? (
+            songs.map((song, index) => (
+              <article
+                key={song.id}
+                className={song.id === selectedSong?.id ? 'track-row is-playing' : 'track-row'}
+              >
+                <div className="track-index">
+                  {song.id === selectedSong?.id ? (
+                    <span className="material-symbols-outlined">equalizer</span>
+                  ) : (
+                    index + 1
+                  )}
                 </div>
-              </div>
-              <div className="track-album">{song.album}</div>
-              <div className="track-duration">{song.duration}</div>
-            </article>
-          ))}
+                <div className="track-title">
+                  <img src={song.cover} alt={song.title} />
+                  <div>
+                    <strong>{song.title}</strong>
+                    <span>{song.artist}</span>
+                  </div>
+                </div>
+                <div className="track-album">{song.album}</div>
+                <div className="track-duration">{song.duration}</div>
+              </article>
+            ))
+          ) : (
+            <div className="feedback-card">
+              <p>No songs available in the server catalog</p>
+            </div>
+          )}
         </div>
       </section>
     </>
