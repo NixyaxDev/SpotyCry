@@ -54,9 +54,15 @@ Found 2 song(s) using 'artist' as search criterion:
 La búsqueda desde CLI comparte la misma lógica base que la búsqueda del servidor para el cliente web:
 
 - es case-insensitive
-- soporta coincidencias parciales
 - recorta espacios extra
 - si el valor está vacío, devuelve todas las canciones
+
+### Comportamiento por criterio
+
+- `title`: busca coincidencias parciales en cualquier parte del título
+- `artist`: busca por prefijo en cualquiera de las palabras del artista
+- `album`: busca por prefijo sobre el nombre del álbum
+- `genre`: exige coincidencia exacta normalizada
 
 ## Criterios válidos
 

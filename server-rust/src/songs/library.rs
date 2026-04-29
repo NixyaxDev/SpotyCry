@@ -65,16 +65,7 @@ impl SongLibrary {
         let songs = self
             .songs
             .iter()
-            .filter(|song| match normalized_criteria.as_str() {
-                "title" => normalize_search_value(&song.title).contains(&normalized_query),
-                "artist" => normalize_optional_search_value(song.artist.as_deref())
-                    .contains(&normalized_query),
-                "album" => normalize_optional_search_value(song.album.as_deref())
-                    .contains(&normalized_query),
-                "genre" => normalize_optional_search_value(song.genre.as_deref())
-                    .contains(&normalized_query),
-                _ => false,
-            })
+            .filter(|song| matches_search(song, &normalized_criteria, &normalized_query))
             .map(|song| SongSummary {
                 id: song.id.clone(),
                 title: song.title.clone(),
@@ -237,6 +228,38 @@ fn validate_audio_file(path: &Path) -> Result<(), String> {
         "mp3" | "wav" => Ok(()),
         _ => Err("Unsupported file type".to_string()),
     }
+}
+
+fn matches_search(song: &Song, criteria: &str, normalized_query: &str) -> bool {
+    match criteria {
+        "title" => title_matches(&song.title, normalized_query),
+        "artist" => artist_matches(song.artist.as_deref(), normalized_query),
+        "album" => album_matches(song.album.as_deref(), normalized_query),
+        "genre" => genre_matches(song.genre.as_deref(), normalized_query),
+        _ => false,
+    }
+}
+
+fn title_matches(title: &str, normalized_query: &str) -> bool {
+    // Title search supports partial substring matching anywhere in the song title.
+    normalize_search_value(title).contains(normalized_query)
+}
+
+fn artist_matches(artist: Option<&str>, normalized_query: &str) -> bool {
+    // Artist search matches if any normalized word starts with the query.
+    normalize_optional_search_value(artist)
+        .split_whitespace()
+        .any(|word| word.starts_with(normalized_query))
+}
+
+fn album_matches(album: Option<&str>, normalized_query: &str) -> bool {
+    // Album search matches the beginning of the normalized album name.
+    normalize_optional_search_value(album).starts_with(normalized_query)
+}
+
+fn genre_matches(genre: Option<&str>, normalized_query: &str) -> bool {
+    // Genre search uses exact normalized equality to make it technically distinct.
+    normalize_optional_search_value(genre) == normalized_query
 }
 
 fn extract_song_metadata(path: &Path) -> Result<SongMetadata, String> {

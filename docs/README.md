@@ -9,6 +9,9 @@ Esta carpeta reúne notas técnicas y funcionales del proyecto **SpotiCry** para
 
 ## Documentos incluidos
 
+- [informe-final-spoticry.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/informe-final-spoticry.md)
+  Documento principal en formato de informe académico, con requisitos, análisis técnico, resultados, conclusiones y sugerencias de diagramas.
+
 - [song-catalog-and-cli.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/song-catalog-and-cli.md)
   Describe cómo se administra el catálogo de canciones, cómo funciona el CLI y cómo se comparte el estado con el servidor.
 
@@ -35,6 +38,12 @@ Esta carpeta reúne notas técnicas y funcionales del proyecto **SpotiCry** para
 
 - [playlist-storage-and-functional-style.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/playlist-storage-and-functional-style.md)
   Documenta por qué las playlists se administran en el servidor y cómo se aplicó el estilo funcional en Rust.
+
+- [web-now-playing-buffer.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/web-now-playing-buffer.md)
+  Explica cómo el navegador mantiene en buffer solo la canción actual y cómo quedó conectada la vista `Now Playing`.
+
+- [web-playback-queue.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/web-playback-queue.md)
+  Documenta la cola local de reproducción, el avance entre canciones y la reproducción de playlists desde la web.
 
 ## Nota
 

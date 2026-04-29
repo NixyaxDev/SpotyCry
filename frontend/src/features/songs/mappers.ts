@@ -1,6 +1,5 @@
 import type { SongDto, SongListItem } from './types'
 import type { Song } from '../../types/music'
-import { songCoverFallback } from '../../shared/constants/media'
 import { formatDuration } from '../../shared/formatters/duration'
 
 export function mapSongDtoToSongListItem(song: SongDto): SongListItem {
@@ -11,7 +10,6 @@ export function mapSongDtoToSongListItem(song: SongDto): SongListItem {
     album: song.album ?? 'Unknown album',
     genre: song.genre ?? 'Unknown genre',
     duration: formatDuration(song.duration),
-    cover: songCoverFallback,
   }
 }
 
@@ -23,6 +21,5 @@ export function mapSongListItemToUiSong(song: SongListItem): Song {
     album: song.album,
     genre: song.genre,
     duration: song.duration,
-    cover: song.cover,
   }
 }

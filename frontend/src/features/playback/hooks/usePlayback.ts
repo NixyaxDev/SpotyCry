@@ -11,6 +11,7 @@ import type {
   StartPlaybackData,
   StopPlaybackData,
 } from '../types'
+import type { AudioPlayerCommand } from '../components/AudioPlayer'
 
 const WS_URL = 'ws://127.0.0.1:8080'
 
@@ -21,8 +22,12 @@ type PlaybackState = {
   error: string | null
   currentSongId: string | null
   isPlaying: boolean
+  audioCommand: AudioPlayerCommand
   startPlayback: (song: Song) => Promise<void>
   stopPlayback: () => Promise<void>
+  pauseBufferedAudio: () => void
+  resumeBufferedAudio: () => void
+  clearPlaybackState: () => void
   markAudioPlaying: () => void
   markAudioStopped: () => void
 }
@@ -34,6 +39,7 @@ export function usePlayback(): PlaybackState {
   const [error, setError] = useState<string | null>(null)
   const [currentSongId, setCurrentSongId] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [audioCommand, setAudioCommand] = useState<AudioPlayerCommand>(null)
   const objectUrlRef = useRef<string | null>(null)
   const socketRef = useRef<WebSocket | null>(null)
   const streamIdRef = useRef<string | null>(null)
@@ -56,6 +62,7 @@ export function usePlayback(): PlaybackState {
     setLoading(true)
     setError(null)
     setIsPlaying(false)
+    setAudioCommand(null)
 
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current)
@@ -214,12 +221,16 @@ export function usePlayback(): PlaybackState {
       error,
       currentSongId,
       isPlaying,
+      audioCommand,
       startPlayback,
       stopPlayback,
+      pauseBufferedAudio,
+      resumeBufferedAudio,
+      clearPlaybackState,
       markAudioPlaying,
       markAudioStopped,
     }),
-    [audioUrl, mimeType, loading, error, currentSongId, isPlaying],
+    [audioUrl, mimeType, loading, error, currentSongId, isPlaying, audioCommand],
   )
 
   function clearLocalPlaybackState() {
@@ -233,6 +244,7 @@ export function usePlayback(): PlaybackState {
     setLoading(false)
     setCurrentSongId(null)
     setIsPlaying(false)
+    setAudioCommand(null)
     streamIdRef.current = null
   }
 
@@ -243,6 +255,29 @@ export function usePlayback(): PlaybackState {
 
   function markAudioStopped() {
     setIsPlaying(false)
+  }
+
+  function pauseBufferedAudio() {
+    setIsPlaying(false)
+    setAudioCommand({
+      type: 'pause',
+      token: Date.now(),
+    })
+  }
+
+  function resumeBufferedAudio() {
+    if (!objectUrlRef.current) {
+      return
+    }
+
+    setAudioCommand({
+      type: 'play',
+      token: Date.now(),
+    })
+  }
+
+  function clearPlaybackState() {
+    clearLocalPlaybackState()
   }
 }
 

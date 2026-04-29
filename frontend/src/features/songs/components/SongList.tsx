@@ -1,4 +1,5 @@
 import type { SongListItem } from '../types'
+import { ClockIcon, PlayCircleIcon, StopCircleIcon } from '../../../shared/icons'
 
 type SongListProps = {
   songs: SongListItem[]
@@ -26,7 +27,7 @@ export function SongList({
             <th>Genre</th>
             <th>Play</th>
             <th>
-              <span className="material-symbols-outlined">schedule</span>
+              <ClockIcon />
             </th>
           </tr>
         </thead>
@@ -36,7 +37,6 @@ export function SongList({
               <td>{index + 1}</td>
               <td>
                 <div className="song-cell">
-                  <img src={song.cover} alt={song.title} />
                   <div>
                     <strong>{song.title}</strong>
                     <span>{song.album}</span>
@@ -52,11 +52,7 @@ export function SongList({
                   onClick={() => onPlay(song.id)}
                   disabled={isPlaybackLoading}
                 >
-                  <span className="material-symbols-outlined fillable">
-                    {song.id === activeSongId && isPlaying
-                      ? 'stop_circle'
-                      : 'play_circle'}
-                  </span>
+                  {song.id === activeSongId && isPlaying ? <StopCircleIcon /> : <PlayCircleIcon />}
                 </button>
               </td>
               <td>{song.duration}</td>

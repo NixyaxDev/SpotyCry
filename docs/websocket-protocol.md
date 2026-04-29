@@ -115,10 +115,17 @@ Request:
 
 Comportamiento:
 
-- solo soporta búsqueda por `title`
+- soporta búsqueda por `title`, `artist`, `album` y `genre`
 - ignora mayúsculas/minúsculas
 - recorta espacios extra
 - si el valor es vacío, devuelve todas las canciones
+
+Técnica por criterio:
+
+- `title`: coincidencia parcial con `contains(...)`
+- `artist`: coincidencia por prefijo sobre palabras del artista
+- `album`: coincidencia por prefijo del nombre del álbum
+- `genre`: coincidencia exacta normalizada
 
 Error esperado si el criterio no es válido:
 
@@ -128,7 +135,7 @@ Error esperado si el criterio no es válido:
   "status": "error",
   "error": {
     "code": "INVALID_SEARCH_CRITERIA",
-    "message": "Only title search is supported in HU-07"
+    "message": "Only title, artist, album and genre search are supported"
   }
 }
 ```

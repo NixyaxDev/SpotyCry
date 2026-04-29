@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { MagnifyingGlassIcon } from '../../../shared/icons'
 
 type SongSearchProps = {
   criteria: 'title' | 'artist' | 'album' | 'genre'
@@ -27,7 +28,7 @@ export function SongSearch({
 
   return (
     <div className="songs-search">
-      <span className="material-symbols-outlined">search</span>
+      <MagnifyingGlassIcon />
       <select
         value={criteria}
         onChange={(event) =>

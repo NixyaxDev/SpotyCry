@@ -23,5 +23,4 @@ export interface SongListItem {
   album: string
   genre: string
   duration: string
-  cover: string
 }
