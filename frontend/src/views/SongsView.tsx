@@ -7,6 +7,8 @@ type SongsViewProps = {
   loading: boolean
   error: string | null
   onReload: () => void
+  searchCriteria: 'title' | 'artist' | 'album' | 'genre'
+  onSearchCriteriaChange: (criteria: 'title' | 'artist' | 'album' | 'genre') => void
   searchValue: string
   onSearchChange: (value: string) => void
   onPlay: (songId: string) => void
@@ -20,6 +22,8 @@ export function SongsView({
   loading,
   error,
   onReload,
+  searchCriteria,
+  onSearchCriteriaChange,
   searchValue,
   onSearchChange,
   onPlay,
@@ -34,7 +38,9 @@ export function SongsView({
           <h3>All Songs</h3>
         </div>
         <SongSearch
+          criteria={searchCriteria}
           initialValue={searchValue}
+          onCriteriaChange={onSearchCriteriaChange}
           onSearchChange={onSearchChange}
           loading={loading}
         />

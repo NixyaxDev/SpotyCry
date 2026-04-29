@@ -8,6 +8,8 @@ type UseSongsResult = {
   loading: boolean
   error: string | null
   reload: () => void
+  searchCriteria: SearchSongsPayload['criteria']
+  setSearchCriteria: (criteria: SearchSongsPayload['criteria']) => void
   searchValue: string
   setSearchValue: (value: string) => void
 }
@@ -17,6 +19,7 @@ export function useSongs(): UseSongsResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
+  const [searchCriteria, setSearchCriteria] = useState<SearchSongsPayload['criteria']>('title')
   const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
@@ -39,7 +42,7 @@ export function useSongs(): UseSongsResult {
                 request_id: `req-${Date.now()}`,
                 action: 'search_songs',
                 payload: {
-                  criteria: 'title',
+                  criteria: searchCriteria,
                   value: searchValue,
                 },
               })
@@ -79,13 +82,15 @@ export function useSongs(): UseSongsResult {
     return () => {
       isMounted = false
     }
-  }, [reloadToken, searchValue])
+  }, [reloadToken, searchCriteria, searchValue])
 
   return {
     songs,
     loading,
     error,
     reload: () => setReloadToken((token) => token + 1),
+    searchCriteria,
+    setSearchCriteria,
     searchValue,
     setSearchValue,
   }

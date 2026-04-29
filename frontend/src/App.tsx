@@ -25,6 +25,8 @@ function App() {
               loading={viewModel.songsState.loading}
               error={viewModel.songsState.error}
               onReload={viewModel.songsState.reload}
+              searchCriteria={viewModel.songsState.searchCriteria}
+              onSearchCriteriaChange={viewModel.songsState.setSearchCriteria}
               searchValue={viewModel.songsState.searchValue}
               onSearchChange={viewModel.songsState.setSearchValue}
               onPlay={viewModel.handlePlaySong}

@@ -8,7 +8,7 @@ export function mapSongDtoToSongListItem(song: SongDto): SongListItem {
     id: song.id,
     title: song.title,
     artist: song.artist ?? 'Unknown artist',
-    album: 'Catalog track',
+    album: song.album ?? 'Unknown album',
     genre: song.genre ?? 'Unknown genre',
     duration: formatDuration(song.duration),
     cover: songCoverFallback,

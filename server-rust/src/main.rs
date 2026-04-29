@@ -16,7 +16,11 @@ async fn main() {
     let app_state = state::AppState::new();
     let (shutdown_sender, shutdown_receiver) = watch::channel(false);
 
-    cli::start_admin_cli(app_state.songs.clone(), shutdown_sender);
+    cli::start_admin_cli(
+        app_state.songs.clone(),
+        app_state.playlists.clone(),
+        shutdown_sender,
+    );
 
     if let Err(error) =
         network::websocket_server::start_server(address, app_state, shutdown_receiver).await

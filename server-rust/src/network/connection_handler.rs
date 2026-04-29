@@ -325,30 +325,26 @@ async fn handle_request(
         "search_songs" => {
             let response = match serde_json::from_value::<SearchSongsPayload>(request.payload) {
                 Ok(payload) => {
-                    if payload.criteria.trim().to_lowercase() != "title" {
-                        serialize_response(&ErrorResponse::new(
-                            request.request_id,
-                            ErrorBody::invalid_search_criteria(),
-                        ))
-                    } else {
-                        match app_state.songs.lock() {
-                            Ok(library) => {
-                                let songs = library
-                                    .search_by_title(&payload.value)
-                                    .into_iter()
-                                    .map(SongDto::from)
-                                    .collect();
+                    match app_state.songs.lock() {
+                        Ok(library) => match library.search_songs(&payload.criteria, &payload.value)
+                        {
+                            Some(results) => {
+                                let songs = results.into_iter().map(SongDto::from).collect();
 
                                 serialize_response(&SuccessResponse::new(
                                     request.request_id,
                                     ListSongsData { songs },
                                 ))
                             }
-                            Err(_) => serialize_response(&ErrorResponse::new(
+                            None => serialize_response(&ErrorResponse::new(
                                 request.request_id,
-                                ErrorBody::internal_error(),
+                                ErrorBody::invalid_search_criteria(),
                             )),
-                        }
+                        },
+                        Err(_) => serialize_response(&ErrorResponse::new(
+                            request.request_id,
+                            ErrorBody::internal_error(),
+                        )),
                     }
                 }
                 Err(_) => serialize_response(&ErrorResponse::new(

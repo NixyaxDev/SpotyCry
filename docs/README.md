@@ -15,6 +15,12 @@ Esta carpeta reúne notas técnicas y funcionales del proyecto **SpotiCry** para
 - [websocket-protocol.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/websocket-protocol.md)
   Resume las acciones WebSocket implementadas, el formato de request/response y los errores estructurados.
 
+- [server-cli-search.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/server-cli-search.md)
+  Explica la búsqueda interactiva desde el CLI del servidor y los criterios soportados.
+
+- [server-cli-playlists.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/server-cli-playlists.md)
+  Resume los comandos de playlists disponibles desde la consola del servidor.
+
 - [playback-flow-and-state.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/playback-flow-and-state.md)
   Explica el flujo de reproducción, el manejo de streams activos, la lógica de inicio y detención, y el buffer local del cliente.
 
@@ -26,6 +32,9 @@ Esta carpeta reúne notas técnicas y funcionales del proyecto **SpotiCry** para
 
 - [architecture-overview.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/architecture-overview.md)
   Explica la arquitectura recomendada del proyecto y la razón detrás de la distribución actual de carpetas.
+
+- [playlist-storage-and-functional-style.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/playlist-storage-and-functional-style.md)
+  Documenta por qué las playlists se administran en el servidor y cómo se aplicó el estilo funcional en Rust.
 
 ## Nota
 

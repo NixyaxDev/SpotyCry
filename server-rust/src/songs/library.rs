@@ -1,6 +1,9 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use lofty::prelude::{Accessor, AudioFile, TaggedFileExt};
+use lofty::probe::Probe;
+
 use crate::songs::Song;
 
 #[derive(Clone, Debug)]
@@ -8,6 +11,7 @@ pub struct SongSummary {
     pub id: String,
     pub title: String,
     pub artist: Option<String>,
+    pub album: Option<String>,
     pub genre: Option<String>,
     pub duration: Option<u64>,
 }
@@ -42,30 +46,49 @@ impl SongLibrary {
                 id: song.id.clone(),
                 title: song.title.clone(),
                 artist: song.artist.clone(),
+                album: song.album.clone(),
                 genre: song.genre.clone(),
                 duration: song.duration,
             })
             .collect()
     }
 
-    pub fn search_by_title(&self, value: &str) -> Vec<SongSummary> {
+    pub fn search_songs(&self, criteria: &str, value: &str) -> Option<Vec<SongSummary>> {
         let normalized_query = normalize_search_value(value);
 
         if normalized_query.is_empty() {
-            return self.song_summaries();
+            return Some(self.song_summaries());
         }
 
-        self.songs
+        let normalized_criteria = normalize_search_value(criteria);
+
+        let songs = self
+            .songs
             .iter()
-            .filter(|song| normalize_search_value(&song.title).contains(&normalized_query))
+            .filter(|song| match normalized_criteria.as_str() {
+                "title" => normalize_search_value(&song.title).contains(&normalized_query),
+                "artist" => normalize_optional_search_value(song.artist.as_deref())
+                    .contains(&normalized_query),
+                "album" => normalize_optional_search_value(song.album.as_deref())
+                    .contains(&normalized_query),
+                "genre" => normalize_optional_search_value(song.genre.as_deref())
+                    .contains(&normalized_query),
+                _ => false,
+            })
             .map(|song| SongSummary {
                 id: song.id.clone(),
                 title: song.title.clone(),
                 artist: song.artist.clone(),
+                album: song.album.clone(),
                 genre: song.genre.clone(),
                 duration: song.duration,
             })
-            .collect()
+            .collect();
+
+        match normalized_criteria.as_str() {
+            "title" | "artist" | "album" | "genre" => Some(songs),
+            _ => None,
+        }
     }
 
     pub fn find_song(&self, song_id: &str) -> Option<Song> {
@@ -87,6 +110,7 @@ impl SongLibrary {
                         id: song.id.clone(),
                         title: song.title.clone(),
                         artist: song.artist.clone(),
+                        album: song.album.clone(),
                         genre: song.genre.clone(),
                         duration: song.duration,
                     })
@@ -216,9 +240,42 @@ fn validate_audio_file(path: &Path) -> Result<(), String> {
 }
 
 fn extract_song_metadata(path: &Path) -> Result<SongMetadata, String> {
+    let fallback = fallback_song_metadata(path)?;
+
+    // Metadata extraction should improve the catalog when tags exist, but it
+    // should never block song registration. If parsing fails, we keep the
+    // filename-based fallback values.
+    let tagged_file = match Probe::open(path).and_then(|probe| probe.read()) {
+        Ok(tagged_file) => tagged_file,
+        Err(_) => return Ok(fallback),
+    };
+
+    let properties = tagged_file.properties();
+    let primary_tag = tagged_file.primary_tag().or_else(|| tagged_file.first_tag());
+
+    Ok(SongMetadata {
+        title: primary_tag
+            .and_then(|tag| tag.title().map(|value| value.into_owned()))
+            .filter(|title| !title.trim().is_empty())
+            .unwrap_or(fallback.title),
+        artist: primary_tag
+            .and_then(|tag| tag.artist().map(|value| value.into_owned()))
+            .filter(|artist| !artist.trim().is_empty()),
+        album: primary_tag
+            .and_then(|tag| tag.album().map(|value| value.into_owned()))
+            .filter(|album| !album.trim().is_empty()),
+        genre: primary_tag
+            .and_then(|tag| tag.genre().map(|value| value.into_owned()))
+            .filter(|genre| !genre.trim().is_empty()),
+        duration: Some(properties.duration().as_secs()).filter(|duration| *duration > 0),
+    })
+}
+
+fn fallback_song_metadata(path: &Path) -> Result<SongMetadata, String> {
     let title = path
-        .file_name()
+        .file_stem()
         .and_then(|name| name.to_str())
+        .or_else(|| path.file_name().and_then(|name| name.to_str()))
         .ok_or_else(|| "Invalid file name".to_string())?
         .to_string();
 
@@ -239,4 +296,8 @@ fn song_file_size(song: &Song) -> Option<u64> {
 
 fn normalize_search_value(value: &str) -> String {
     value.trim().to_lowercase()
+}
+
+fn normalize_optional_search_value(value: Option<&str>) -> String {
+    value.map(normalize_search_value).unwrap_or_default()
 }

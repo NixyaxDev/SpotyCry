@@ -35,9 +35,7 @@ impl PlaylistLibrary {
             return Err(PlaylistLibraryError::InvalidName);
         }
 
-        if self.playlists.iter().any(|playlist| {
-            normalize_playlist_name(&playlist.name).to_lowercase() == normalized_name.to_lowercase()
-        }) {
+        if self.contains_name_case_insensitive(&normalized_name) {
             return Err(PlaylistLibraryError::AlreadyExists);
         }
 
@@ -48,7 +46,14 @@ impl PlaylistLibrary {
         };
 
         self.next_id += 1;
-        self.playlists.push(playlist.clone());
+        // The library itself is stateful, but we still prefer immutable
+        // collection replacement for playlist storage updates whenever practical.
+        self.playlists = self
+            .playlists
+            .iter()
+            .cloned()
+            .chain(std::iter::once(playlist.clone()))
+            .collect();
 
         Ok(playlist)
     }
@@ -94,14 +99,36 @@ impl PlaylistLibrary {
         &mut self,
         updated_playlist: Playlist,
     ) -> Result<Playlist, PlaylistLibraryError> {
-        let playlist_index = self
+        if !self
             .playlists
             .iter()
-            .position(|playlist| playlist.id == updated_playlist.id)
-            .ok_or(PlaylistLibraryError::PlaylistNotFound)?;
+            .any(|playlist| playlist.id == updated_playlist.id)
+        {
+            return Err(PlaylistLibraryError::PlaylistNotFound);
+        }
 
-        self.playlists[playlist_index] = updated_playlist.clone();
+        self.playlists = self
+            .playlists
+            .iter()
+            .cloned()
+            .map(|playlist| {
+                if playlist.id == updated_playlist.id {
+                    updated_playlist.clone()
+                } else {
+                    playlist
+                }
+            })
+            .collect();
+
         Ok(updated_playlist)
+    }
+
+    fn contains_name_case_insensitive(&self, playlist_name: &str) -> bool {
+        let normalized_target = playlist_name.to_lowercase();
+
+        self.playlists.iter().any(|playlist| {
+            normalize_playlist_name(&playlist.name).to_lowercase() == normalized_target
+        })
     }
 }
 

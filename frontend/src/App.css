@@ -439,6 +439,15 @@
   color: var(--on-surface);
 }
 
+.songs-search select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font: inherit;
+  cursor: pointer;
+}
+
 .songs-search input::placeholder {
   color: var(--on-surface-variant);
 }
