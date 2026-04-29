@@ -72,6 +72,28 @@ impl SongLibrary {
         self.songs.iter().find(|song| song.id == song_id).cloned()
     }
 
+    pub fn has_song(&self, song_id: &str) -> bool {
+        self.songs.iter().any(|song| song.id == song_id)
+    }
+
+    pub fn song_summaries_by_ids(&self, song_ids: &[String]) -> Vec<SongSummary> {
+        song_ids
+            .iter()
+            .filter_map(|song_id| {
+                self.songs
+                    .iter()
+                    .find(|song| song.id == *song_id)
+                    .map(|song| SongSummary {
+                        id: song.id.clone(),
+                        title: song.title.clone(),
+                        artist: song.artist.clone(),
+                        genre: song.genre.clone(),
+                        duration: song.duration,
+                    })
+            })
+            .collect()
+    }
+
     pub fn active_songs(&self) -> Vec<&Song> {
         self.songs.iter().filter(|song| song.is_active).collect()
     }

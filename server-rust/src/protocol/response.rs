@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-use crate::playlists::Playlist;
+use crate::playlists::{Playlist, PlaylistSummary};
 use crate::protocol::error::ErrorBody;
 use crate::songs::SongSummary;
 
@@ -55,6 +55,33 @@ pub struct ListPlaylistsData {
 #[derive(Debug, Serialize)]
 pub struct CreatePlaylistData {
     pub playlist: PlaylistDto,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PlaylistData {
+    pub playlist: PlaylistDto,
+}
+
+#[derive(Debug, Serialize)]
+pub struct PlaylistSummaryDto {
+    pub song_count: usize,
+    pub total_duration_seconds: u64,
+    pub unknown_duration_count: usize,
+}
+
+impl From<PlaylistSummary> for PlaylistSummaryDto {
+    fn from(summary: PlaylistSummary) -> Self {
+        Self {
+            song_count: summary.song_count,
+            total_duration_seconds: summary.total_duration_seconds,
+            unknown_duration_count: summary.unknown_duration_count,
+        }
+    }
+}
+
+#[derive(Debug, Serialize)]
+pub struct PlaylistSummaryData {
+    pub summary: PlaylistSummaryDto,
 }
 
 #[derive(Debug, Serialize)]

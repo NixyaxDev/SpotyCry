@@ -222,6 +222,27 @@
   transform: scale(1.02);
 }
 
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--on-surface);
+  padding: 0.95rem 1.2rem;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.secondary-button--compact {
+  padding: 0.6rem 0.85rem;
+}
+
 .panel {
   margin-bottom: 2.5rem;
 }
@@ -724,10 +745,60 @@
   transform: scale(1.04);
 }
 
+.playlist-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.playlist-summary-card,
+.playlist-control-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.1rem 1.2rem;
+  border-radius: 1rem;
+  background: rgba(88, 85, 99, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.playlist-summary-card strong {
+  font-size: 1.4rem;
+}
+
+.playlist-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.playlist-inline-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.playlist-inline-form input,
+.playlist-inline-form select {
+  width: 100%;
+  padding: 0.85rem 0.95rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(25, 22, 20, 0.9);
+  color: var(--on-surface);
+  font: inherit;
+}
+
+.playlist-control-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .track-list-header,
 .track-row {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1.5fr) minmax(0, 1fr) 70px;
+  grid-template-columns: 40px minmax(0, 1.35fr) minmax(0, 1fr) 110px 70px;
   gap: 1rem;
   align-items: center;
 }
@@ -776,6 +847,11 @@
 .track-album,
 .track-duration {
   color: var(--on-surface-variant);
+}
+
+.track-actions {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .track-title {
@@ -985,6 +1061,11 @@
     grid-template-columns: 1fr;
   }
 
+  .playlist-summary-grid,
+  .playlist-tools-grid {
+    grid-template-columns: 1fr;
+  }
+
   .now-playing-layout {
     grid-template-columns: 1fr;
   }
@@ -1060,7 +1141,9 @@
   .songs-table tbody td:nth-child(3),
   .songs-table tbody td:nth-child(4),
   .track-list-header span:nth-child(3),
-  .track-row .track-album {
+  .track-list-header span:nth-child(4),
+  .track-row .track-album,
+  .track-row .track-actions {
     display: none;
   }
 

@@ -1,9 +1,14 @@
-use crate::playlists::Playlist;
+use crate::playlists::{
+    add_song_to_playlist, remove_song_from_playlist, Playlist, PlaylistOperationError,
+};
 
 #[derive(Debug)]
 pub enum PlaylistLibraryError {
     InvalidName,
     AlreadyExists,
+    PlaylistNotFound,
+    SongAlreadyInPlaylist,
+    SongNotInPlaylist,
 }
 
 pub struct PlaylistLibrary {
@@ -47,8 +52,71 @@ impl PlaylistLibrary {
 
         Ok(playlist)
     }
+
+    pub fn find_playlist(&self, playlist_id: &str) -> Option<Playlist> {
+        self.playlists
+            .iter()
+            .find(|playlist| playlist.id == playlist_id)
+            .cloned()
+    }
+
+    pub fn add_song_to_playlist(
+        &mut self,
+        playlist_id: &str,
+        song_id: &str,
+    ) -> Result<Playlist, PlaylistLibraryError> {
+        let current_playlist = self
+            .find_playlist(playlist_id)
+            .ok_or(PlaylistLibraryError::PlaylistNotFound)?;
+
+        let updated_playlist =
+            add_song_to_playlist(&current_playlist, song_id).map_err(map_operation_error)?;
+
+        self.replace_playlist(updated_playlist)
+    }
+
+    pub fn remove_song_from_playlist(
+        &mut self,
+        playlist_id: &str,
+        song_id: &str,
+    ) -> Result<Playlist, PlaylistLibraryError> {
+        let current_playlist = self
+            .find_playlist(playlist_id)
+            .ok_or(PlaylistLibraryError::PlaylistNotFound)?;
+
+        let updated_playlist =
+            remove_song_from_playlist(&current_playlist, song_id).map_err(map_operation_error)?;
+
+        self.replace_playlist(updated_playlist)
+    }
+
+    fn replace_playlist(
+        &mut self,
+        updated_playlist: Playlist,
+    ) -> Result<Playlist, PlaylistLibraryError> {
+        let playlist_index = self
+            .playlists
+            .iter()
+            .position(|playlist| playlist.id == updated_playlist.id)
+            .ok_or(PlaylistLibraryError::PlaylistNotFound)?;
+
+        self.playlists[playlist_index] = updated_playlist.clone();
+        Ok(updated_playlist)
+    }
 }
 
 fn normalize_playlist_name(name: &str) -> String {
     name.trim().to_string()
+}
+
+fn map_operation_error(error: PlaylistOperationError) -> PlaylistLibraryError {
+    match error {
+        PlaylistOperationError::SongAlreadyInPlaylist => {
+            PlaylistLibraryError::SongAlreadyInPlaylist
+        }
+        PlaylistOperationError::SongNotInPlaylist => PlaylistLibraryError::SongNotInPlaylist,
+        PlaylistOperationError::InvalidFilterCriteria
+        | PlaylistOperationError::InvalidSortCriteria
+        | PlaylistOperationError::InvalidSortDirection => PlaylistLibraryError::PlaylistNotFound,
+    }
 }

@@ -56,6 +56,48 @@ impl ErrorBody {
         }
     }
 
+    pub fn playlist_not_found() -> Self {
+        Self {
+            code: "PLAYLIST_NOT_FOUND".to_string(),
+            message: "Playlist not found".to_string(),
+        }
+    }
+
+    pub fn song_already_in_playlist() -> Self {
+        Self {
+            code: "SONG_ALREADY_IN_PLAYLIST".to_string(),
+            message: "Song is already in the selected playlist".to_string(),
+        }
+    }
+
+    pub fn song_not_in_playlist() -> Self {
+        Self {
+            code: "SONG_NOT_IN_PLAYLIST".to_string(),
+            message: "Song is not in the selected playlist".to_string(),
+        }
+    }
+
+    pub fn invalid_filter_criteria() -> Self {
+        Self {
+            code: "INVALID_FILTER_CRITERIA".to_string(),
+            message: "Only title, artist and genre filters are supported".to_string(),
+        }
+    }
+
+    pub fn invalid_sort_criteria() -> Self {
+        Self {
+            code: "INVALID_SORT_CRITERIA".to_string(),
+            message: "Only title, artist and duration sorting are supported".to_string(),
+        }
+    }
+
+    pub fn invalid_sort_direction() -> Self {
+        Self {
+            code: "INVALID_SORT_DIRECTION".to_string(),
+            message: "Sort direction must be asc or desc".to_string(),
+        }
+    }
+
     pub fn song_not_found() -> Self {
         Self {
             code: "SONG_NOT_FOUND".to_string(),

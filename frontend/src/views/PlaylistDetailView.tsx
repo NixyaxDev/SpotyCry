@@ -1,9 +1,30 @@
+import { useState } from 'react'
+import { AddSongToPlaylist } from '../features/playlists/components/AddSongToPlaylist'
+import { PlaylistFilter } from '../features/playlists/components/PlaylistFilter'
+import { PlaylistSort } from '../features/playlists/components/PlaylistSort'
+import { PlaylistSummary } from '../features/playlists/components/PlaylistSummary'
+import type { PlaylistSummaryDto, SongDto as PlaylistSongDto } from '../features/playlists/types'
 import type { Song } from '../types/music'
 import type { Playlist } from '../types/music'
 
 type PlaylistDetailViewProps = {
   playlist: Playlist | null
   songs: Song[]
+  availableSongs: PlaylistSongDto[]
+  summary: PlaylistSummaryDto | null
+  error: string | null
+  actionLoading: boolean
+  onAddSong: (songId: string) => Promise<void>
+  onRemoveSong: (songId: string) => Promise<void>
+  onFilterSongs: (
+    criteria: 'title' | 'artist' | 'genre',
+    value: string,
+  ) => Promise<void>
+  onSortSongs: (
+    criteria: 'title' | 'artist' | 'duration',
+    direction: 'asc' | 'desc',
+  ) => Promise<void>
+  onResetSongView: () => void
   selectedSong: Song | null
 }
 
@@ -13,8 +34,23 @@ const playlistCover =
 export function PlaylistDetailView({
   playlist,
   songs,
+  availableSongs,
+  summary,
+  error,
+  actionLoading,
+  onAddSong,
+  onRemoveSong,
+  onFilterSongs,
+  onSortSongs,
+  onResetSongView,
   selectedSong,
 }: PlaylistDetailViewProps) {
+  const [selectedSongId, setSelectedSongId] = useState('')
+  const [filterCriteria, setFilterCriteria] = useState<'title' | 'artist' | 'genre'>('title')
+  const [filterValue, setFilterValue] = useState('')
+  const [sortCriteria, setSortCriteria] = useState<'title' | 'artist' | 'duration'>('title')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
   return (
     <>
       <section className="playlist-hero">
@@ -49,11 +85,44 @@ export function PlaylistDetailView({
         </div>
       </section>
 
+      <PlaylistSummary summary={summary} />
+
+      <section className="playlist-tools-grid">
+        <AddSongToPlaylist
+          songs={availableSongs}
+          selectedSongId={selectedSongId}
+          onSelectedSongIdChange={setSelectedSongId}
+          onAddSong={handleAddSong}
+          loading={actionLoading}
+        />
+        <PlaylistFilter
+          criteria={filterCriteria}
+          value={filterValue}
+          onCriteriaChange={setFilterCriteria}
+          onValueChange={setFilterValue}
+          onApply={handleFilterSongs}
+          onReset={handleResetSongView}
+          loading={actionLoading}
+        />
+        <PlaylistSort
+          criteria={sortCriteria}
+          direction={sortDirection}
+          onCriteriaChange={setSortCriteria}
+          onDirectionChange={setSortDirection}
+          onApply={handleSortSongs}
+          onReset={handleResetSongView}
+          loading={actionLoading}
+        />
+      </section>
+
+      {error && <div className="feedback-card feedback-card--error"><p>{error}</p></div>}
+
       <section className="panel">
         <div className="track-list-header">
           <span>#</span>
           <span>Title</span>
           <span>Album</span>
+          <span>Actions</span>
           <span>
             <span className="material-symbols-outlined">schedule</span>
           </span>
@@ -80,6 +149,18 @@ export function PlaylistDetailView({
                   </div>
                 </div>
                 <div className="track-album">{song.album}</div>
+                <div className="track-actions">
+                  <button
+                    type="button"
+                    className="secondary-button secondary-button--compact"
+                    onClick={() => {
+                      void onRemoveSong(song.id)
+                    }}
+                    disabled={actionLoading}
+                  >
+                    Remove
+                  </button>
+                </div>
                 <div className="track-duration">{song.duration}</div>
               </article>
             ))
@@ -92,4 +173,29 @@ export function PlaylistDetailView({
       </section>
     </>
   )
+
+  async function handleAddSong() {
+    if (!selectedSongId) {
+      return
+    }
+
+    await onAddSong(selectedSongId)
+    setSelectedSongId('')
+  }
+
+  async function handleFilterSongs() {
+    await onFilterSongs(filterCriteria, filterValue)
+  }
+
+  async function handleSortSongs() {
+    await onSortSongs(sortCriteria, sortDirection)
+  }
+
+  function handleResetSongView() {
+    setFilterValue('')
+    setFilterCriteria('title')
+    setSortCriteria('title')
+    setSortDirection('asc')
+    onResetSongView()
+  }
 }
