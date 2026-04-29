@@ -18,14 +18,14 @@ export async function sendWebSocketRequest<TData, TPayload = unknown>(
         const response = JSON.parse(event.data) as ServerResponse<TData>
         resolve(response)
       } catch {
-        reject(new Error('Server returned an invalid response'))
+        reject(new Error('El servidor devolvió una respuesta inválida'))
       } finally {
         socket.close()
       }
     })
 
     socket.addEventListener('error', () => {
-      reject(new Error('Could not connect to the WebSocket server'))
+      reject(new Error('No se pudo conectar con el servidor WebSocket'))
     })
   })
 }

@@ -28,13 +28,13 @@ pub async fn handle_connection(
     client_address: String,
     app_state: AppState,
 ) {
-    println!("👤 Cliente conectado: {}", client_address);
+    println!("Cliente conectado: {}", client_address);
     let mut current_stream_id: Option<String> = None;
 
     while let Some(message_result) = websocket_stream.next().await {
         match message_result {
             Ok(Message::Text(text)) => {
-                println!("📩 Mensaje recibido de {}: {}", client_address, text);
+                println!("Mensaje recibido de {}: {}", client_address, text);
 
                 if let Err(error) = handle_text_message(
                     &mut websocket_stream,
@@ -44,42 +44,39 @@ pub async fn handle_connection(
                 )
                 .await
                 {
-                    eprintln!(
-                        "❌ Error procesando mensaje de {}: {}",
-                        client_address, error
-                    );
+                    eprintln!("Error procesando mensaje de {}: {}", client_address, error);
                     break;
                 }
             }
 
             Ok(Message::Binary(bytes)) => {
                 println!(
-                    "📦 Mensaje binario recibido de {}: {} bytes",
+                    "Mensaje binario recibido de {}: {} bytes",
                     client_address,
                     bytes.len()
                 );
             }
 
             Ok(Message::Close(_)) => {
-                println!("🔴 Cliente desconectado: {}", client_address);
+                println!("Cliente desconectado: {}", client_address);
                 break;
             }
 
             Ok(Message::Ping(payload)) => {
-                println!("🏓 Ping recibido de {}", client_address);
+                println!("Ping recibido de {}", client_address);
 
                 if let Err(error) = websocket_stream.send(Message::Pong(payload)).await {
-                    eprintln!("❌ Error enviando Pong a {}: {}", client_address, error);
+                    eprintln!("Error enviando Pong a {}: {}", client_address, error);
                     break;
                 }
             }
 
             Ok(Message::Pong(_)) => {
-                println!("🏓 Pong recibido de {}", client_address);
+                println!("Pong recibido de {}", client_address);
             }
 
             Err(error) => {
-                eprintln!("❌ Error en la conexión con {}: {}", client_address, error);
+                eprintln!("Error en la conexión con {}: {}", client_address, error);
                 break;
             }
 
@@ -88,7 +85,7 @@ pub async fn handle_connection(
     }
 
     cleanup_stream_state(&app_state, &mut current_stream_id);
-    println!("🧹 Conexión finalizada: {}", client_address);
+    println!("Conexión finalizada: {}", client_address);
 }
 
 async fn handle_text_message(
@@ -324,29 +321,26 @@ async fn handle_request(
         }
         "search_songs" => {
             let response = match serde_json::from_value::<SearchSongsPayload>(request.payload) {
-                Ok(payload) => {
-                    match app_state.songs.lock() {
-                        Ok(library) => match library.search_songs(&payload.criteria, &payload.value)
-                        {
-                            Some(results) => {
-                                let songs = results.into_iter().map(SongDto::from).collect();
+                Ok(payload) => match app_state.songs.lock() {
+                    Ok(library) => match library.search_songs(&payload.criteria, &payload.value) {
+                        Some(results) => {
+                            let songs = results.into_iter().map(SongDto::from).collect();
 
-                                serialize_response(&SuccessResponse::new(
-                                    request.request_id,
-                                    ListSongsData { songs },
-                                ))
-                            }
-                            None => serialize_response(&ErrorResponse::new(
+                            serialize_response(&SuccessResponse::new(
                                 request.request_id,
-                                ErrorBody::invalid_search_criteria(),
-                            )),
-                        },
-                        Err(_) => serialize_response(&ErrorResponse::new(
+                                ListSongsData { songs },
+                            ))
+                        }
+                        None => serialize_response(&ErrorResponse::new(
                             request.request_id,
-                            ErrorBody::internal_error(),
+                            ErrorBody::invalid_search_criteria(),
                         )),
-                    }
-                }
+                    },
+                    Err(_) => serialize_response(&ErrorResponse::new(
+                        request.request_id,
+                        ErrorBody::internal_error(),
+                    )),
+                },
                 Err(_) => serialize_response(&ErrorResponse::new(
                     request.request_id,
                     ErrorBody::invalid_payload(),
@@ -499,7 +493,7 @@ async fn handle_request(
 
 fn serialize_response<T: serde::Serialize>(response: &T) -> String {
     serde_json::to_string(response)
-        .unwrap_or_else(|_| "{\"request_id\":\"unknown\",\"status\":\"error\",\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"Could not serialize response\"}}".to_string())
+        .unwrap_or_else(|_| "{\"request_id\":\"unknown\",\"status\":\"error\",\"error\":{\"code\":\"INTERNAL_ERROR\",\"message\":\"No se pudo serializar la respuesta\"}}".to_string())
 }
 
 async fn send_protocol_error(

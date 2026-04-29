@@ -35,7 +35,7 @@ export function SongsView({
     <>
       <section className="panel">
         <div className="panel-title-row">
-          <h3>All Songs</h3>
+          <h3>Todas las canciones</h3>
         </div>
         <SongSearch
           criteria={searchCriteria}
@@ -45,22 +45,22 @@ export function SongsView({
           loading={loading}
         />
 
-        {loading && <div className="feedback-card">Loading songs...</div>}
+        {loading && <div className="feedback-card">Cargando canciones...</div>}
 
         {!loading && error && (
           <div className="feedback-card feedback-card--error">
             <p>{error}</p>
             <button type="button" className="primary-button" onClick={onReload}>
-              Try again
+              Intentar de nuevo
             </button>
           </div>
         )}
 
         {!loading && !error && songs.length === 0 && (
           <div className="feedback-card">
-            <p>{searchValue.trim().length > 0 ? 'No songs found' : 'No songs available'}</p>
+            <p>{searchValue.trim().length > 0 ? 'No se encontraron canciones' : 'No hay canciones disponibles'}</p>
             <button type="button" className="primary-button" onClick={onReload}>
-              Refresh
+              Actualizar
             </button>
           </div>
         )}

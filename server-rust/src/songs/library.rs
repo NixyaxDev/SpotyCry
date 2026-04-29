@@ -118,12 +118,12 @@ impl SongLibrary {
         validate_audio_file(&normalized_path)?;
 
         let file_size = fs::metadata(&normalized_path)
-            .map_err(|_| "Could not read file metadata".to_string())?
+            .map_err(|_| "No se pudo leer la metadata del archivo".to_string())?
             .len();
         let metadata = extract_song_metadata(&normalized_path)?;
 
         if self.is_duplicate(&normalized_path, &metadata.title, file_size) {
-            return Err("Song already exists".to_string());
+            return Err("La canción ya existe".to_string());
         }
 
         let song = Song {
@@ -207,14 +207,14 @@ fn normalize_file_path(path: &str) -> Result<PathBuf, String> {
     let file_path = Path::new(path);
 
     if !file_path.exists() {
-        return Err("File does not exist".to_string());
+        return Err("El archivo no existe".to_string());
     }
 
     if !file_path.is_file() {
-        return Err("Path is not a file".to_string());
+        return Err("La ruta no corresponde a un archivo".to_string());
     }
 
-    fs::canonicalize(file_path).map_err(|_| "Could not normalize file path".to_string())
+    fs::canonicalize(file_path).map_err(|_| "No se pudo normalizar la ruta del archivo".to_string())
 }
 
 fn validate_audio_file(path: &Path) -> Result<(), String> {
@@ -222,11 +222,11 @@ fn validate_audio_file(path: &Path) -> Result<(), String> {
         .extension()
         .and_then(|ext| ext.to_str())
         .map(|ext| ext.to_lowercase())
-        .ok_or_else(|| "Unsupported file type".to_string())?;
+        .ok_or_else(|| "Tipo de archivo no soportado".to_string())?;
 
     match extension.as_str() {
         "mp3" | "wav" => Ok(()),
-        _ => Err("Unsupported file type".to_string()),
+        _ => Err("Tipo de archivo no soportado".to_string()),
     }
 }
 
@@ -241,40 +241,41 @@ fn matches_search(song: &Song, criteria: &str, normalized_query: &str) -> bool {
 }
 
 fn title_matches(title: &str, normalized_query: &str) -> bool {
-    // Title search supports partial substring matching anywhere in the song title.
+    // El título permite coincidencias parciales en cualquier parte del texto.
     normalize_search_value(title).contains(normalized_query)
 }
 
 fn artist_matches(artist: Option<&str>, normalized_query: &str) -> bool {
-    // Artist search matches if any normalized word starts with the query.
+    // El artista coincide si alguna palabra normalizada comienza con la consulta.
     normalize_optional_search_value(artist)
         .split_whitespace()
         .any(|word| word.starts_with(normalized_query))
 }
 
 fn album_matches(album: Option<&str>, normalized_query: &str) -> bool {
-    // Album search matches the beginning of the normalized album name.
+    // El álbum coincide cuando la consulta aparece al inicio del nombre normalizado.
     normalize_optional_search_value(album).starts_with(normalized_query)
 }
 
 fn genre_matches(genre: Option<&str>, normalized_query: &str) -> bool {
-    // Genre search uses exact normalized equality to make it technically distinct.
+    // El género usa igualdad exacta normalizada para que el criterio sea distinto.
     normalize_optional_search_value(genre) == normalized_query
 }
 
 fn extract_song_metadata(path: &Path) -> Result<SongMetadata, String> {
     let fallback = fallback_song_metadata(path)?;
 
-    // Metadata extraction should improve the catalog when tags exist, but it
-    // should never block song registration. If parsing fails, we keep the
-    // filename-based fallback values.
+    // Si el archivo trae tags válidos, enriquecemos el catálogo. Si no, se
+    // conserva el fallback basado en el nombre del archivo para no bloquear el registro.
     let tagged_file = match Probe::open(path).and_then(|probe| probe.read()) {
         Ok(tagged_file) => tagged_file,
         Err(_) => return Ok(fallback),
     };
 
     let properties = tagged_file.properties();
-    let primary_tag = tagged_file.primary_tag().or_else(|| tagged_file.first_tag());
+    let primary_tag = tagged_file
+        .primary_tag()
+        .or_else(|| tagged_file.first_tag());
 
     Ok(SongMetadata {
         title: primary_tag
@@ -299,7 +300,7 @@ fn fallback_song_metadata(path: &Path) -> Result<SongMetadata, String> {
         .file_stem()
         .and_then(|name| name.to_str())
         .or_else(|| path.file_name().and_then(|name| name.to_str()))
-        .ok_or_else(|| "Invalid file name".to_string())?
+        .ok_or_else(|| "Nombre de archivo inválido".to_string())?
         .to_string();
 
     Ok(SongMetadata {

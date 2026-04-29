@@ -68,7 +68,7 @@ export function useSongs(): UseSongsResult {
         setError(
           requestError instanceof Error
             ? requestError.message
-            : 'Unexpected error while loading songs',
+            : 'Ocurrió un error inesperado al cargar las canciones',
         )
       } finally {
         if (isMounted) {

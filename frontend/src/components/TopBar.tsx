@@ -5,7 +5,7 @@ export function TopBar() {
     <header className="topbar">
       <div className="topbar-copy">
         <SignalIcon />
-        <p>Server-backed playback queue and playlists</p>
+        <p>Cola de reproducción y playlists respaldadas por el servidor</p>
       </div>
     </header>
   )

@@ -19,6 +19,7 @@ export function SongSearch({
   const [value, setValue] = useState(initialValue)
 
   useEffect(() => {
+    // Se espera un pequeño debounce para no disparar una solicitud por cada tecla.
     const timeoutId = window.setTimeout(() => {
       onSearchChange(value)
     }, 300)
@@ -32,24 +33,37 @@ export function SongSearch({
       <select
         value={criteria}
         onChange={(event) =>
-          onCriteriaChange(
-            event.target.value as 'title' | 'artist' | 'album' | 'genre',
-          )
+        onCriteriaChange(
+          event.target.value as 'title' | 'artist' | 'album' | 'genre',
+        )
         }
-        aria-label="Search songs by criteria"
+        aria-label="Buscar canciones por criterio"
       >
-        <option value="title">Title</option>
-        <option value="artist">Artist</option>
-        <option value="album">Album</option>
-        <option value="genre">Genre</option>
+        <option value="title">Título</option>
+        <option value="artist">Artista</option>
+        <option value="album">Álbum</option>
+        <option value="genre">Género</option>
       </select>
       <input
         value={value}
         onChange={(event) => setValue(event.target.value)}
-        placeholder={`Search songs by ${criteria}...`}
-        aria-label={`Search songs by ${criteria}`}
+        placeholder={`Buscar canciones por ${labelForCriteria(criteria).toLowerCase()}...`}
+        aria-label={`Buscar canciones por ${labelForCriteria(criteria).toLowerCase()}`}
       />
-      {loading && <span className="songs-search-status">Searching...</span>}
+      {loading && <span className="songs-search-status">Buscando...</span>}
     </div>
   )
+}
+
+function labelForCriteria(criteria: SongSearchProps['criteria']) {
+  switch (criteria) {
+    case 'title':
+      return 'Título'
+    case 'artist':
+      return 'Artista'
+    case 'album':
+      return 'Álbum'
+    case 'genre':
+      return 'Género'
+  }
 }

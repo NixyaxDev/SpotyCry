@@ -19,7 +19,7 @@ export function PlaylistSort({
 }: PlaylistSortProps) {
   return (
     <div className="playlist-control-card">
-      <p className="eyebrow">Sort Songs</p>
+      <p className="eyebrow">Ordenar canciones</p>
       <div className="playlist-inline-form">
         <select
           value={criteria}
@@ -28,17 +28,17 @@ export function PlaylistSort({
           }
           disabled={loading}
         >
-          <option value="title">Title</option>
-          <option value="artist">Artist</option>
-          <option value="duration">Duration</option>
+          <option value="title">Título</option>
+          <option value="artist">Artista</option>
+          <option value="duration">Duración</option>
         </select>
         <select
           value={direction}
           onChange={(event) => onDirectionChange(event.target.value as 'asc' | 'desc')}
           disabled={loading}
         >
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
+          <option value="asc">Ascendente</option>
+          <option value="desc">Descendente</option>
         </select>
       </div>
       <div className="playlist-control-actions">
@@ -50,10 +50,10 @@ export function PlaylistSort({
           }}
           disabled={loading}
         >
-          Apply sort
+          Aplicar orden
         </button>
         <button type="button" className="secondary-button" onClick={onReset} disabled={loading}>
-          Reset
+          Restablecer
         </button>
       </div>
     </div>

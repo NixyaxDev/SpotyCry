@@ -5,6 +5,7 @@ pub enum AdminCommand {
     Search,
     Playlist(PlaylistCommand),
     Add { path: String },
+    AddDir { path: String },
     Delete { song_id: String },
     Active { song_id: Option<String> },
     Exit,
@@ -13,10 +14,20 @@ pub enum AdminCommand {
 #[derive(Debug)]
 pub enum PlaylistCommand {
     List,
-    Create { name: String },
-    Songs { playlist_id: String },
-    AddSong { playlist_id: String, song_id: String },
-    RemoveSong { playlist_id: String, song_id: String },
+    Create {
+        name: String,
+    },
+    Songs {
+        playlist_id: String,
+    },
+    AddSong {
+        playlist_id: String,
+        song_id: String,
+    },
+    RemoveSong {
+        playlist_id: String,
+        song_id: String,
+    },
     Filter {
         playlist_id: String,
         criteria: String,
@@ -27,19 +38,25 @@ pub enum PlaylistCommand {
         criteria: String,
         direction: String,
     },
-    Summary { playlist_id: String },
+    Summary {
+        playlist_id: String,
+    },
 }
 
 pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
     let trimmed = input.trim();
 
     if trimmed.is_empty() {
-        return Err("No command entered. Type 'help' to see the available commands.".to_string());
+        return Err(
+            "No se ingresó ningún comando. Escribe 'help' para ver los comandos disponibles."
+                .to_string(),
+        );
     }
 
     let mut parts = trimmed.split_whitespace();
     let command = parts.next().ok_or_else(|| {
-        "No command entered. Type 'help' to see the available commands.".to_string()
+        "No se ingresó ningún comando. Escribe 'help' para ver los comandos disponibles."
+            .to_string()
     })?;
 
     match command.to_lowercase().as_str() {
@@ -47,7 +64,7 @@ pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
         "list" => Ok(AdminCommand::List),
         "search" => {
             if parts.next().is_some() {
-                Err("Usage: search".to_string())
+                Err("Uso: search".to_string())
             } else {
                 Ok(AdminCommand::Search)
             }
@@ -57,7 +74,7 @@ pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
             let song_id = parts.next().map(|value| value.to_string());
 
             if parts.next().is_some() {
-                Err("Usage: active or active <song-id>".to_string())
+                Err("Uso: active o active <song-id>".to_string())
             } else {
                 Ok(AdminCommand::Active { song_id })
             }
@@ -67,18 +84,27 @@ pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
             let path = parts.collect::<Vec<_>>().join(" ");
 
             if path.is_empty() {
-                Err("Usage: add <local-file-path>".to_string())
+                Err("Uso: add <ruta-local-del-archivo>".to_string())
             } else {
                 Ok(AdminCommand::Add { path })
+            }
+        }
+        "add-dir" => {
+            let path = parts.collect::<Vec<_>>().join(" ");
+
+            if path.is_empty() {
+                Err("Uso: add-dir <ruta-local-de-la-carpeta>".to_string())
+            } else {
+                Ok(AdminCommand::AddDir { path })
             }
         }
         "delete" => {
             let song_id = parts
                 .next()
-                .ok_or_else(|| "Usage: delete <song-id>".to_string())?;
+                .ok_or_else(|| "Uso: delete <song-id>".to_string())?;
 
             if parts.next().is_some() {
-                Err("Usage: delete <song-id>".to_string())
+                Err("Uso: delete <song-id>".to_string())
             } else {
                 Ok(AdminCommand::Delete {
                     song_id: song_id.to_string(),
@@ -86,7 +112,7 @@ pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
             }
         }
         _ => Err(format!(
-            "Unknown command: '{}'. Type 'help' to see the available commands.",
+            "Comando desconocido: '{}'. Escribe 'help' para ver los comandos disponibles.",
             command
         )),
     }
@@ -96,8 +122,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
     let subcommand = parts
         .first()
         .ok_or_else(|| {
-            "Usage: playlist <list|create|songs|add-song|remove-song|filter|sort|summary>"
-                .to_string()
+            "Uso: playlist <list|create|songs|add-song|remove-song|filter|sort|summary>".to_string()
         })?
         .to_lowercase();
 
@@ -109,7 +134,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
             let name = remaining.join(" ");
 
             if name.trim().is_empty() {
-                return Err("Usage: playlist create <name>".to_string());
+                return Err("Uso: playlist create <name>".to_string());
             }
 
             PlaylistCommand::Create { name }
@@ -117,10 +142,10 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         "songs" => {
             let playlist_id = remaining
                 .first()
-                .ok_or_else(|| "Usage: playlist songs <playlist-id>".to_string())?;
+                .ok_or_else(|| "Uso: playlist songs <playlist-id>".to_string())?;
 
             if remaining.len() != 1 {
-                return Err("Usage: playlist songs <playlist-id>".to_string());
+                return Err("Uso: playlist songs <playlist-id>".to_string());
             }
 
             PlaylistCommand::Songs {
@@ -129,7 +154,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         }
         "add-song" => {
             if remaining.len() != 2 {
-                return Err("Usage: playlist add-song <playlist-id> <song-id>".to_string());
+                return Err("Uso: playlist add-song <playlist-id> <song-id>".to_string());
             }
 
             PlaylistCommand::AddSong {
@@ -139,7 +164,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         }
         "remove-song" => {
             if remaining.len() != 2 {
-                return Err("Usage: playlist remove-song <playlist-id> <song-id>".to_string());
+                return Err("Uso: playlist remove-song <playlist-id> <song-id>".to_string());
             }
 
             PlaylistCommand::RemoveSong {
@@ -150,8 +175,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         "filter" => {
             if remaining.len() < 3 {
                 return Err(
-                    "Usage: playlist filter <playlist-id> <title|artist|genre> <value>"
-                        .to_string(),
+                    "Uso: playlist filter <playlist-id> <title|artist|genre> <value>".to_string(),
                 );
             }
 
@@ -164,7 +188,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         "sort" => {
             if remaining.len() != 3 {
                 return Err(
-                    "Usage: playlist sort <playlist-id> <title|artist|duration> <asc|desc>"
+                    "Uso: playlist sort <playlist-id> <title|artist|duration> <asc|desc>"
                         .to_string(),
                 );
             }
@@ -178,10 +202,10 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         "summary" => {
             let playlist_id = remaining
                 .first()
-                .ok_or_else(|| "Usage: playlist summary <playlist-id>".to_string())?;
+                .ok_or_else(|| "Uso: playlist summary <playlist-id>".to_string())?;
 
             if remaining.len() != 1 {
-                return Err("Usage: playlist summary <playlist-id>".to_string());
+                return Err("Uso: playlist summary <playlist-id>".to_string());
             }
 
             PlaylistCommand::Summary {
@@ -190,7 +214,7 @@ fn parse_playlist_command(parts: Vec<&str>) -> Result<AdminCommand, String> {
         }
         _ => {
             return Err(
-                "Usage: playlist <list|create|songs|add-song|remove-song|filter|sort|summary>"
+                "Uso: playlist <list|create|songs|add-song|remove-song|filter|sort|summary>"
                     .to_string(),
             )
         }

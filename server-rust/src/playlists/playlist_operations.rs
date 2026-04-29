@@ -131,7 +131,7 @@ pub fn sort_playlist_songs(
 ) -> Vec<SongSummary> {
     let mut sorted_songs = songs.to_vec();
 
-    // Rust sorting mutates a temporary local copy only. The original playlist state is unchanged.
+    // Rust necesita mutar una copia temporal para ordenar. El estado original de la playlist no cambia.
     sorted_songs.sort_by(|left, right| {
         let ordering = match criteria {
             SortCriteria::Title => normalize_value(&left.title).cmp(&normalize_value(&right.title)),

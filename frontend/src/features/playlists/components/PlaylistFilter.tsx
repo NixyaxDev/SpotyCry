@@ -19,7 +19,7 @@ export function PlaylistFilter({
 }: PlaylistFilterProps) {
   return (
     <div className="playlist-control-card">
-      <p className="eyebrow">Filter Songs</p>
+      <p className="eyebrow">Filtrar canciones</p>
       <div className="playlist-inline-form">
         <select
           value={criteria}
@@ -28,15 +28,15 @@ export function PlaylistFilter({
           }
           disabled={loading}
         >
-          <option value="title">Title</option>
-          <option value="artist">Artist</option>
-          <option value="genre">Genre</option>
+          <option value="title">Título</option>
+          <option value="artist">Artista</option>
+          <option value="genre">Género</option>
         </select>
         <input
           type="text"
           value={value}
           onChange={(event) => onValueChange(event.target.value)}
-          placeholder="Search in playlist..."
+          placeholder="Buscar en la playlist..."
           disabled={loading}
         />
       </div>
@@ -49,10 +49,10 @@ export function PlaylistFilter({
           }}
           disabled={loading}
         >
-          Apply filter
+          Aplicar filtro
         </button>
         <button type="button" className="secondary-button" onClick={onReset} disabled={loading}>
-          Reset
+          Restablecer
         </button>
       </div>
     </div>

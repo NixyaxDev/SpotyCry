@@ -25,7 +25,7 @@ export function PlaylistList({
             <button
               type="button"
               className="floating-play"
-              aria-label={`Play ${playlist.name}`}
+              aria-label={`Reproducir ${playlist.name}`}
               onClick={(event) => {
                 event.stopPropagation()
                 onPlayPlaylist(playlist.id)
@@ -36,7 +36,7 @@ export function PlaylistList({
           </div>
           <div className="playlist-card-body">
             <h3>{playlist.name}</h3>
-            <p>{playlist.song_ids.length} songs</p>
+            <p>{playlist.song_ids.length} canciones</p>
           </div>
         </article>
       ))}

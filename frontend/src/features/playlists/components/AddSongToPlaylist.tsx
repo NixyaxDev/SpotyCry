@@ -17,14 +17,14 @@ export function AddSongToPlaylist({
 }: AddSongToPlaylistProps) {
   return (
     <div className="playlist-control-card">
-      <p className="eyebrow">Add Song</p>
+      <p className="eyebrow">Agregar canción</p>
       <div className="playlist-inline-form">
         <select
           value={selectedSongId}
           onChange={(event) => onSelectedSongIdChange(event.target.value)}
           disabled={loading || songs.length === 0}
         >
-          <option value="">Select a song</option>
+          <option value="">Selecciona una canción</option>
           {songs.map((song) => (
             <option key={song.id} value={song.id}>
               {song.title}
@@ -39,7 +39,7 @@ export function AddSongToPlaylist({
           }}
           disabled={loading || selectedSongId.length === 0 || songs.length === 0}
         >
-          Add
+          Agregar
         </button>
       </div>
     </div>

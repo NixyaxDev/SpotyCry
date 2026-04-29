@@ -29,8 +29,8 @@ export function PlaylistsView({
   return (
     <>
       <SectionHeader
-        title="Your Playlists"
-        subtitle="Collections created from the songs available on the server."
+        title="Tus playlists"
+        subtitle="Colecciones creadas a partir de las canciones disponibles en el servidor."
         stacked
       />
 
@@ -42,20 +42,20 @@ export function PlaylistsView({
         />
 
         <div className="playlist-results">
-          {loading && <div className="feedback-card">Loading playlists...</div>}
+          {loading && <div className="feedback-card">Cargando playlists...</div>}
 
           {!loading && error && (
             <div className="feedback-card feedback-card--error">
               <p>{error}</p>
               <button type="button" className="primary-button" onClick={onReload}>
-                Try again
+                Intentar de nuevo
               </button>
             </div>
           )}
 
           {!loading && !error && playlists.length === 0 && (
             <div className="feedback-card">
-              <p>No playlists created yet. They remain available while the server is running.</p>
+              <p>No se han creado playlists todavía. Seguirán disponibles mientras el servidor esté en ejecución.</p>
             </div>
           )}
 

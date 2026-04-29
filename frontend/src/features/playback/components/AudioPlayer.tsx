@@ -44,7 +44,7 @@ export function AudioPlayer({
     audioRef.current
       .play()
       .catch(() => {
-        // Autoplay can be blocked by the browser; controls remain available.
+        // El navegador puede bloquear el autoplay; los controles siguen disponibles.
       })
   }, [audioUrl])
 
@@ -65,7 +65,7 @@ export function AudioPlayer({
     audioRef.current
       .play()
       .catch(() => {
-        // Autoplay can be blocked by the browser; controls remain available.
+        // El navegador puede bloquear el autoplay; los controles siguen disponibles.
       })
   }, [command])
 

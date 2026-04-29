@@ -44,8 +44,8 @@ export function PlayerBar({
           </>
         ) : (
           <div className="player-empty-copy">
-            <strong>No song selected</strong>
-            <span>Load songs from the server to start playing</span>
+            <strong>No hay ninguna canción seleccionada</strong>
+            <span>Carga canciones desde el servidor para comenzar a reproducir</span>
           </div>
         )}
       </div>

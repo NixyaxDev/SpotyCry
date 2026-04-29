@@ -58,16 +58,16 @@ export function PlaylistDetailView({
           <QueueListIcon />
         </div>
         <div className="playlist-hero-copy">
-          <p className="eyebrow">Public Playlist</p>
-          <h2>{playlist?.name ?? 'Playlist Detail'}</h2>
+          <p className="eyebrow">Playlist pública</p>
+          <h2>{playlist?.name ?? 'Detalle de playlist'}</h2>
           <p className="playlist-description">
-            This playlist is stored in the server memory and currently contains the
-            songs assigned to it in the active session.
+            Esta playlist se almacena en la memoria del servidor y contiene las
+            canciones asignadas durante la sesión activa.
           </p>
           <div className="playlist-meta">
-            <span>{songs.length} Songs</span>
+            <span>{songs.length} canciones</span>
             <span>•</span>
-            <span>Server-backed playlist</span>
+            <span>Playlist administrada por el servidor</span>
           </div>
           <div className="playlist-actions">
             <button
@@ -119,9 +119,9 @@ export function PlaylistDetailView({
       <section className="panel">
         <div className="track-list-header">
           <span>#</span>
-          <span>Title</span>
-          <span>Album</span>
-          <span>Actions</span>
+          <span>Título</span>
+          <span>Álbum</span>
+          <span>Acciones</span>
           <span>
             <ClockIcon />
           </span>
@@ -156,7 +156,7 @@ export function PlaylistDetailView({
                     }}
                     disabled={actionLoading}
                   >
-                    Remove
+                    Quitar
                   </button>
                 </div>
                 <div className="track-duration">{song.duration}</div>
@@ -164,7 +164,7 @@ export function PlaylistDetailView({
             ))
           ) : (
             <div className="feedback-card">
-              <p>No songs available in the server catalog</p>
+              <p>No hay canciones disponibles en el catálogo del servidor</p>
             </div>
           )}
         </div>

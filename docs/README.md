@@ -12,6 +12,9 @@ Esta carpeta reúne notas técnicas y funcionales del proyecto **SpotiCry** para
 - [informe-final-spoticry.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/informe-final-spoticry.md)
   Documento principal en formato de informe académico, con requisitos, análisis técnico, resultados, conclusiones y sugerencias de diagramas.
 
+- [guia-ejecucion-spoticry.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/guia-ejecucion-spoticry.md)
+  Documento de apoyo con instrucciones para correr el proyecto, comandos del servidor y flujo recomendado de prueba.
+
 - [song-catalog-and-cli.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/song-catalog-and-cli.md)
   Describe cómo se administra el catálogo de canciones, cómo funciona el CLI y cómo se comparte el estado con el servidor.
 

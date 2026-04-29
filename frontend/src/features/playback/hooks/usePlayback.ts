@@ -117,6 +117,7 @@ export function usePlayback(): PlaybackState {
             chunks.set(parsed.chunk_index, decodeBase64Chunk(parsed.bytes_base64))
 
             if (parsed.is_last && playbackMeta) {
+              // El cliente reconstruye únicamente la canción actual para permitir seek local.
               const orderedChunks = [...chunks.entries()]
                 .sort(([left], [right]) => left - right)
                 .map(([, value]) => value.slice().buffer as ArrayBuffer)
@@ -136,7 +137,7 @@ export function usePlayback(): PlaybackState {
           const message =
             streamError instanceof Error
               ? streamError.message
-              : 'Could not process playback stream'
+              : 'No se pudo procesar el flujo de reproducción'
 
           setLoading(false)
           setError(message)
@@ -147,7 +148,7 @@ export function usePlayback(): PlaybackState {
       })
 
       socket.addEventListener('error', () => {
-        const message = 'Could not connect to the playback stream'
+        const message = 'No se pudo conectar con el flujo de reproducción'
         setLoading(false)
         setError(message)
         setIsPlaying(false)
@@ -208,7 +209,7 @@ export function usePlayback(): PlaybackState {
 
       controlSocket.addEventListener('error', () => {
         controlSocket.close()
-        reject(new Error('Could not stop playback on the server'))
+        reject(new Error('No se pudo detener la reproducción en el servidor'))
       })
     })
   }
@@ -258,6 +259,7 @@ export function usePlayback(): PlaybackState {
   }
 
   function pauseBufferedAudio() {
+    // Pausar no limpia el buffer local; así el usuario puede reanudar o hacer seek.
     setIsPlaying(false)
     setAudioCommand({
       type: 'pause',

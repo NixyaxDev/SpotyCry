@@ -79,6 +79,7 @@ export function useAppViewModel() {
   }, [selectedPlaylistId, selectedPlaylist?.songIds.length])
 
   useEffect(() => {
+    // Si la cola actual deja de existir en el catálogo, se limpia para evitar referencias huérfanas.
     if (!playbackState.currentSongId && playQueue.length > 0) {
       const queueStillExists = playQueue.some((song) => uiSongs.some((uiSong) => uiSong.id === song.id))
 
@@ -141,6 +142,7 @@ export function useAppViewModel() {
       playbackState.audioUrl &&
       !playbackState.isPlaying
     ) {
+      // Si la canción sigue en buffer, reanudar es más rápido que volver a pedirla al servidor.
       playbackState.resumeBufferedAudio()
       return
     }

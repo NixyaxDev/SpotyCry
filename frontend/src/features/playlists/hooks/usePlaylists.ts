@@ -91,7 +91,7 @@ export function usePlaylists(): UsePlaylistsResult {
         setError(
           requestError instanceof Error
             ? requestError.message
-            : 'Unexpected error while loading playlists',
+            : 'Ocurrió un error inesperado al cargar las playlists',
         )
       } finally {
         if (isMounted) {
@@ -131,7 +131,7 @@ export function usePlaylists(): UsePlaylistsResult {
     const trimmedName = name.trim()
 
     if (trimmedName.length === 0) {
-      setCreateError('Playlist name cannot be empty')
+      setCreateError('El nombre de la playlist no puede estar vacío')
       return false
     }
 
@@ -159,7 +159,7 @@ export function usePlaylists(): UsePlaylistsResult {
       setCreateError(
         requestError instanceof Error
           ? requestError.message
-          : 'Unexpected error while creating playlist',
+          : 'Ocurrió un error inesperado al crear la playlist',
       )
       return false
     } finally {
@@ -230,7 +230,7 @@ export function usePlaylists(): UsePlaylistsResult {
       setDetailError(
         requestError instanceof Error
           ? requestError.message
-          : 'Unexpected error while loading playlist summary',
+          : 'Ocurrió un error inesperado al cargar el resumen de la playlist',
       )
       setSummary(null)
     } finally {
@@ -266,7 +266,7 @@ export function usePlaylists(): UsePlaylistsResult {
       setDetailError(
         requestError instanceof Error
           ? requestError.message
-          : 'Unexpected error while updating playlist',
+          : 'Ocurrió un error inesperado al actualizar la playlist',
       )
       return false
     } finally {
@@ -297,7 +297,7 @@ export function usePlaylists(): UsePlaylistsResult {
       setDetailError(
         requestError instanceof Error
           ? requestError.message
-          : 'Unexpected error while loading playlist songs',
+          : 'Ocurrió un error inesperado al cargar las canciones de la playlist',
       )
       setDetailSongs([])
     } finally {

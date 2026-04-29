@@ -49,27 +49,27 @@ export function NowPlayingView({
       <div className="now-playing-main">
         <div className="now-playing-art">
           <MusicalNoteIcon />
-          <p>Only the current song is buffered locally in the browser.</p>
+          <p>Solo la canción actual se mantiene en un buffer local del navegador.</p>
         </div>
         <div className="now-playing-copy">
-          <h2>{selectedSong?.title ?? 'No song selected'}</h2>
-          <p>{selectedSong?.artist ?? 'Load songs from the server to begin playback'}</p>
+          <h2>{selectedSong?.title ?? 'No hay ninguna canción seleccionada'}</h2>
+          <p>{selectedSong?.artist ?? 'Carga canciones desde el servidor para iniciar la reproducción'}</p>
           <div className="now-playing-meta">
-            <span>{selectedSong?.album ?? 'No album available'}</span>
+            <span>{selectedSong?.album ?? 'Sin álbum disponible'}</span>
             <span>•</span>
-            <span>{selectedSong?.genre ?? 'No genre available'}</span>
+            <span>{selectedSong?.genre ?? 'Sin género disponible'}</span>
             <span>•</span>
-            <span>{selectedSong?.duration ?? 'Unknown duration'}</span>
+            <span>{selectedSong?.duration ?? 'Duración desconocida'}</span>
           </div>
           <div className="now-playing-status-row">
             <span className="status-pill">
               {isPlaybackLoading
-                ? 'Buffering current song'
+                ? 'Preparando canción actual'
                 : isPlaying
-                  ? 'Playing from local buffer'
+                  ? 'Reproduciendo desde el buffer local'
                   : hasBufferedSong
-                    ? 'Buffered locally and ready'
-                    : 'No active local buffer'}
+                    ? 'Buffer local listo'
+                    : 'Sin buffer local activo'}
             </span>
           </div>
         </div>
@@ -108,8 +108,8 @@ export function NowPlayingView({
           </button>
         </div>
         <p className="now-playing-helper">
-          Use the audio controls in the bottom player to seek forward or backward as many
-          times as you want while this current song remains buffered locally.
+          Usa los controles del reproductor inferior para adelantar o retroceder
+          cuantas veces quieras mientras esta canción siga en el buffer local.
         </p>
         {playbackError && (
           <div className="feedback-card feedback-card--error now-playing-feedback">
@@ -120,7 +120,7 @@ export function NowPlayingView({
 
       <aside className="up-next-panel">
         <div className="panel-title-row">
-          <h3>Queue</h3>
+          <h3>Cola</h3>
           <QueueListIcon />
         </div>
         <div className="up-next-list">
@@ -135,10 +135,10 @@ export function NowPlayingView({
                 <div>
                   <small className="queue-marker">
                     {index < currentQueueIndex
-                      ? 'Previous'
+                      ? 'Anterior'
                       : index === currentQueueIndex
-                        ? 'Now Playing'
-                        : 'Next'}
+                        ? 'Sonando ahora'
+                        : 'Siguiente'}
                   </small>
                   <strong>{song.title}</strong>
                   <span>{song.artist}</span>
@@ -148,7 +148,7 @@ export function NowPlayingView({
             ))
           ) : (
             <div className="feedback-card">
-              <p>No songs queued</p>
+              <p>No hay canciones en cola</p>
             </div>
           )}
         </div>

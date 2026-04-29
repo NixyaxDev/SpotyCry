@@ -82,12 +82,16 @@ Ejemplos:
 ```text
 help
 list
+search
 add ./src/songs/christmas.mp3
+add-dir ./src/songs
 delete song-001
 active
 active song-001
 exit
 ```
+
+`add-dir <folder-path>` permite registrar de una sola vez todas las canciones soportadas (`.mp3` y `.wav`) encontradas dentro de una carpeta local del servidor.
 
 ## Acciones WebSocket principales
 

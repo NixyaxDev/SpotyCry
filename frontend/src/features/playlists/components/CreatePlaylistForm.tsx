@@ -17,12 +17,12 @@ export function CreatePlaylistForm({
   return (
     <form className="playlist-form-card" onSubmit={handleSubmit}>
       <div className="playlist-form-copy">
-        <p className="eyebrow">Create Playlist</p>
-        <h3>Build a new collection from the songs available on the server.</h3>
+        <p className="eyebrow">Crear playlist</p>
+        <h3>Crea una nueva colección a partir de las canciones disponibles en el servidor.</h3>
       </div>
 
       <label className="playlist-form-field">
-        <span>Name</span>
+        <span>Nombre</span>
         <input
           type="text"
           value={name}
@@ -32,7 +32,7 @@ export function CreatePlaylistForm({
               setLocalError(null)
             }
           }}
-          placeholder="My Playlist"
+          placeholder="Mi playlist"
           disabled={loading}
         />
       </label>
@@ -42,7 +42,7 @@ export function CreatePlaylistForm({
       )}
 
       <button type="submit" className="primary-button" disabled={loading}>
-        {loading ? 'Creating...' : 'Create playlist'}
+        {loading ? 'Creando...' : 'Crear playlist'}
       </button>
     </form>
   )
@@ -51,7 +51,7 @@ export function CreatePlaylistForm({
     event.preventDefault()
 
     if (name.trim().length === 0) {
-      setLocalError('Playlist name cannot be empty')
+      setLocalError('El nombre de la playlist no puede estar vacío')
       return
     }
 

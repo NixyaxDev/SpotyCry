@@ -22,10 +22,10 @@ export function SongList({
         <thead>
           <tr>
             <th>#</th>
-            <th>Title</th>
-            <th>Artist</th>
-            <th>Genre</th>
-            <th>Play</th>
+            <th>Título</th>
+            <th>Artista</th>
+            <th>Género</th>
+            <th>Reproducir</th>
             <th>
               <ClockIcon />
             </th>

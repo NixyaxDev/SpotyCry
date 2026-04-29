@@ -10,7 +10,7 @@ use tokio::sync::watch;
 
 #[tokio::main]
 async fn main() {
-    println!("🚀 Iniciando servidor SpotiCry...");
+    println!("Iniciando servidor SpotiCry...");
 
     let address = "127.0.0.1:8080";
     let app_state = state::AppState::new();
@@ -25,8 +25,8 @@ async fn main() {
     if let Err(error) =
         network::websocket_server::start_server(address, app_state, shutdown_receiver).await
     {
-        eprintln!("❌ Error al iniciar el servidor: {}", error);
+        eprintln!("Error al iniciar el servidor: {}", error);
     }
 
-    println!("👋 Servidor SpotiCry finalizado.");
+    println!("Servidor SpotiCry finalizado.");
 }

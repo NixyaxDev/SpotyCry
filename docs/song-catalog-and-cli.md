@@ -66,6 +66,23 @@ el sistema realiza este flujo:
 6. verifica duplicados
 7. registra la canción en memoria
 
+También existe un modo de carga por carpeta:
+
+```text
+add-dir <carpeta>
+```
+
+En ese caso el servidor:
+
+1. valida que la ruta exista
+2. valida que sea una carpeta
+3. recorre los archivos contenidos en esa carpeta
+4. detecta únicamente archivos `.mp3` y `.wav`
+5. intenta registrar cada canción usando la misma lógica de `add <ruta>`
+6. reporta cuáles canciones fueron agregadas y cuáles se omitieron
+
+Esto permite cargar en lote todas las canciones válidas encontradas en una carpeta local del servidor.
+
 ### Manejo de metadata
 
 Actualmente se usa una estrategia simple:
@@ -104,11 +121,15 @@ Comandos implementados:
 
 - `help`
 - `list`
+- `search`
 - `add <path>`
+- `add-dir <folder-path>`
 - `delete <song-id>`
 - `active`
 - `active <song-id>`
 - `exit`
+
+La presencia de `add-dir` es importante porque permite demostrar no solo registro individual de canciones, sino también una estrategia práctica de carga masiva desde una carpeta.
 
 ## Resultado técnico
 

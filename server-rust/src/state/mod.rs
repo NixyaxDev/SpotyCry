@@ -5,11 +5,11 @@ use crate::playback::active_streams::ActiveStreams;
 use crate::playlists::PlaylistLibrary;
 use crate::songs::SongLibrary;
 
-/// Shared application state for the whole server process.
+/// Estado compartido de toda la aplicación del servidor.
 ///
-/// Keeping the shared resources in one place makes it easier to pass the same
-/// state to the CLI, WebSocket handlers and future modules without growing
-/// long parameter lists everywhere.
+/// Mantener los recursos compartidos en un solo lugar simplifica pasar el mismo
+/// estado al CLI, a los handlers WebSocket y a futuros módulos sin crecer
+/// listas largas de parámetros en cada función.
 #[derive(Clone)]
 pub struct AppState {
     pub songs: Arc<Mutex<SongLibrary>>,

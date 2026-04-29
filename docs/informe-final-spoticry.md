@@ -66,7 +66,7 @@ Estas decisiones fueron intencionales para mantener el proyecto dentro de un alc
 | Al menos 3 criterios diferentes de búsqueda | Cumplido | Se usan técnicas distintas según criterio: `contains`, prefijo por palabra, prefijo global y coincidencia exacta. |
 | Inicio de reproducción | Cumplido | Acción `start_playback` con envío de metadata y chunks de audio. |
 | Finalización de reproducción | Cumplido | Acción `stop_playback` con limpieza de estado activo. |
-| Agregar canciones desde archivos locales | Cumplido | CLI soporta registro desde `.mp3` y `.wav`. |
+| Agregar canciones desde archivos locales | Cumplido | CLI soporta registro individual y carga por carpeta de archivos `.mp3` y `.wav`. |
 | Eliminar canciones si no están reproduciéndose | Cumplido | El servidor impide eliminar canciones activas. |
 | Interfaz de texto propia del servidor | Cumplido | Existe CLI local con administración de canciones y playlists. |
 | Administración de playlists | Cumplido | Crear, listar, agregar/remover canciones, filtrar, ordenar y resumir playlists. |
@@ -185,6 +185,11 @@ Arc<Mutex<SongLibrary>>
 ```
 
 Las canciones se registran desde archivos locales `.mp3` y `.wav`.
+
+El CLI del servidor permite dos estrategias:
+
+- carga individual con `add <ruta>`
+- carga masiva por carpeta con `add-dir <carpeta>`
 
 Cada canción conserva al menos:
 
@@ -438,6 +443,7 @@ help
 list
 search
 add ./src/songs/christmas.mp3
+add-dir ./src/songs
 delete song-001
 active
 active song-001
@@ -450,6 +456,7 @@ exit
 - `list`: lista las canciones cargadas en el catálogo
 - `search`: inicia la búsqueda interactiva por criterio
 - `add <ruta>`: agrega una canción desde un archivo local
+- `add-dir <carpeta>`: intenta agregar todas las canciones soportadas encontradas en una carpeta local
 - `delete <song-id>`: elimina una canción del catálogo si no está en reproducción
 - `active`: muestra la canción activa actual
 - `active <song-id>`: marca una canción como activa
@@ -499,6 +506,7 @@ Un flujo corto y fácil de mostrar durante la demostración sería:
 ```text
 add ./src/songs/christmas.mp3
 add ./src/songs/navidad.mp3
+add-dir ./src/songs
 list
 search
 playlist create Demo Playlist
@@ -513,6 +521,7 @@ delete song-001
 Este flujo permite evidenciar:
 
 - carga real de canciones
+- carga individual y carga masiva por carpeta
 - consulta del catálogo
 - búsqueda por criterio
 - creación de playlist

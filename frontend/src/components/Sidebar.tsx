@@ -13,7 +13,7 @@ const navItems: Array<{
   screen: Screen
   matches: Screen[]
 }> = [
-  { icon: MusicalNoteIcon, label: 'Songs', screen: 'songs', matches: ['songs'] },
+  { icon: MusicalNoteIcon, label: 'Canciones', screen: 'songs', matches: ['songs'] },
   {
     icon: QueueListIcon,
     label: 'Playlists',
@@ -22,7 +22,7 @@ const navItems: Array<{
   },
   {
     icon: PlayCircleIcon,
-    label: 'Now Playing',
+    label: 'Sonando ahora',
     screen: 'now-playing',
     matches: ['now-playing'],
   },
@@ -33,10 +33,10 @@ export function Sidebar({ screen, onNavigate }: SidebarProps) {
     <aside className="sidebar">
       <div className="brand-block">
         <h1>SpotiCry</h1>
-        <p>Emotional Sanctuary</p>
+        <p>Refugio musical</p>
       </div>
 
-      <nav className="sidebar-nav" aria-label="Primary">
+      <nav className="sidebar-nav" aria-label="Navegación principal">
         {navItems.map((item) => (
           <button
             key={item.screen}
