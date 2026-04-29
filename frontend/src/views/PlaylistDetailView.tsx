@@ -1,6 +1,8 @@
 import type { Song } from '../types/music'
+import type { Playlist } from '../types/music'
 
 type PlaylistDetailViewProps = {
+  playlist: Playlist | null
   songs: Song[]
   selectedSong: Song | null
 }
@@ -9,24 +11,29 @@ const playlistCover =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuAyrc6FpM7hRBM0d12cHAPehjZD7sSeArtp7vFA-iW9lpnOMPTrhrvcEnQfff0uYSkf8FY7VgowcTZE_oFt-fZ0F_MjwQJpRWq6YXmxvB0kKCsBEB0uDeq-w4OAsU444teqad-lmqA8uyiLLc_y1f8CYmbG3YJs7TFVorhjHxNG8usrAlnc6hFFZkF3XbyWlVTwMlJ_1Dutjek8H9MV9QQxOjKm4gV6qTt8Nk8Z5YeBGBOLUf8i9e2oYDSFzS999bNPWHBHlaAON04'
 
 export function PlaylistDetailView({
+  playlist,
   songs,
   selectedSong,
 }: PlaylistDetailViewProps) {
   return (
     <>
       <section className="playlist-hero">
-        <img className="playlist-hero-cover" src={playlistCover} alt="Late Night Vibes" />
+        <img
+          className="playlist-hero-cover"
+          src={playlistCover}
+          alt={playlist?.name ?? 'Playlist cover'}
+        />
         <div className="playlist-hero-copy">
           <p className="eyebrow">Public Playlist</p>
-          <h2>Late Night Vibes</h2>
+          <h2>{playlist?.name ?? 'Playlist Detail'}</h2>
           <p className="playlist-description">
-            A curated selection of melancholic downtempo tracks for introspective
-            midnight drives and quiet moments of reflection.
+            This playlist is stored in the server memory and currently contains the
+            songs assigned to it in the active session.
           </p>
           <div className="playlist-meta">
-            <span>24k Saves</span>
+            <span>{songs.length} Songs</span>
             <span>•</span>
-            <span>42 Songs, 2 hr 35 min</span>
+            <span>Server-backed playlist</span>
           </div>
           <div className="playlist-actions">
             <button type="button" className="play-button-large">

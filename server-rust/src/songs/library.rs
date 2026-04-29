@@ -210,7 +210,9 @@ fn extract_song_metadata(path: &Path) -> Result<SongMetadata, String> {
 }
 
 fn song_file_size(song: &Song) -> Option<u64> {
-    fs::metadata(&song.file_path).ok().map(|metadata| metadata.len())
+    fs::metadata(&song.file_path)
+        .ok()
+        .map(|metadata| metadata.len())
 }
 
 fn normalize_search_value(value: &str) -> String {

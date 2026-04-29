@@ -26,3 +26,7 @@ export type ServerResponse<T = unknown> =
 export interface StartPlaybackPayload {
   song_id: string
 }
+
+export interface CreatePlaylistPayload {
+  name: string
+}
