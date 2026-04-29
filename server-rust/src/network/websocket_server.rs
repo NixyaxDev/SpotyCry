@@ -6,11 +6,13 @@ use tokio_tungstenite::accept_async;
 
 use crate::network::connection_handler::handle_connection;
 use crate::playback::active_streams::ActiveStreams;
+use crate::playlists::PlaylistLibrary;
 use crate::songs::SongLibrary;
 
 pub async fn start_server(
     address: &str,
     song_library: Arc<Mutex<SongLibrary>>,
+    playlist_library: Arc<Mutex<PlaylistLibrary>>,
     active_streams: ActiveStreams,
     mut shutdown_receiver: watch::Receiver<bool>,
 ) -> Result<(), Box<dyn std::error::Error>> {
@@ -25,6 +27,7 @@ pub async fn start_server(
 
                 println!("🔌 Nueva conexión TCP desde: {}", client_address);
                 let song_library = Arc::clone(&song_library);
+                let playlist_library = Arc::clone(&playlist_library);
                 let active_streams = Arc::clone(&active_streams);
 
                 tokio::spawn(async move {
@@ -35,6 +38,7 @@ pub async fn start_server(
                                 websocket_stream,
                                 client_address.to_string(),
                                 song_library,
+                                playlist_library,
                                 active_streams,
                             )
                             .await;

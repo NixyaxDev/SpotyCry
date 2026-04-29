@@ -16,9 +16,9 @@ pub fn parse_command(input: &str) -> Result<AdminCommand, String> {
     }
 
     let mut parts = trimmed.split_whitespace();
-    let command = parts
-        .next()
-        .ok_or_else(|| "No command entered. Type 'help' to see the available commands.".to_string())?;
+    let command = parts.next().ok_or_else(|| {
+        "No command entered. Type 'help' to see the available commands.".to_string()
+    })?;
 
     match command.to_lowercase().as_str() {
         "help" => Ok(AdminCommand::Help),

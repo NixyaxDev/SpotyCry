@@ -25,3 +25,8 @@ pub struct StopPlaybackPayload {
     pub stream_id: String,
     pub song_id: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct CreatePlaylistPayload {
+    pub name: String,
+}

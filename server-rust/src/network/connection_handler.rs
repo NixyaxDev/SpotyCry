@@ -10,20 +10,24 @@ use crate::playback::active_streams::{
     register_stream, remove_stream, stream_song_id, ActiveStreams,
 };
 use crate::playback::stream_service::read_song_chunks;
+use crate::playlists::{PlaylistLibrary, PlaylistLibraryError};
 use crate::protocol::error::ErrorBody;
 use crate::protocol::request::{
-    ClientRequest, SearchSongsPayload, StartPlaybackPayload, StopPlaybackPayload,
+    ClientRequest, CreatePlaylistPayload, SearchSongsPayload, StartPlaybackPayload,
+    StopPlaybackPayload,
 };
 use crate::protocol::response::{
-    ErrorResponse, ListSongsData, SongDto, StopPlaybackData, SuccessResponse,
+    CreatePlaylistData, ErrorResponse, ListPlaylistsData, ListSongsData, PlaylistDto, SongDto,
+    StopPlaybackData, SuccessResponse,
 };
-use crate::songs::SongLibraryError;
 use crate::songs::SongLibrary;
+use crate::songs::SongLibraryError;
 
 pub async fn handle_connection(
     mut websocket_stream: WebSocketStream<TcpStream>,
     client_address: String,
     song_library: Arc<Mutex<SongLibrary>>,
+    playlist_library: Arc<Mutex<PlaylistLibrary>>,
     active_streams: ActiveStreams,
 ) {
     println!("👤 Cliente conectado: {}", client_address);
@@ -34,15 +38,15 @@ pub async fn handle_connection(
             Ok(Message::Text(text)) => {
                 println!("📩 Mensaje recibido de {}: {}", client_address, text);
 
-                if let Err(error) =
-                    handle_text_message(
-                        &mut websocket_stream,
-                        &text,
-                        &song_library,
-                        &active_streams,
-                        &mut current_stream_id,
-                    )
-                    .await
+                if let Err(error) = handle_text_message(
+                    &mut websocket_stream,
+                    &text,
+                    &song_library,
+                    &playlist_library,
+                    &active_streams,
+                    &mut current_stream_id,
+                )
+                .await
                 {
                     eprintln!(
                         "❌ Error procesando mensaje de {}: {}",
@@ -69,10 +73,7 @@ pub async fn handle_connection(
                 println!("🏓 Ping recibido de {}", client_address);
 
                 if let Err(error) = websocket_stream.send(Message::Pong(payload)).await {
-                    eprintln!(
-                        "❌ Error enviando Pong a {}: {}",
-                        client_address, error
-                    );
+                    eprintln!("❌ Error enviando Pong a {}: {}", client_address, error);
                     break;
                 }
             }
@@ -82,10 +83,7 @@ pub async fn handle_connection(
             }
 
             Err(error) => {
-                eprintln!(
-                    "❌ Error en la conexión con {}: {}",
-                    client_address, error
-                );
+                eprintln!("❌ Error en la conexión con {}: {}", client_address, error);
                 break;
             }
 
@@ -101,6 +99,7 @@ async fn handle_text_message(
     websocket_stream: &mut WebSocketStream<TcpStream>,
     text: &str,
     song_library: &Arc<Mutex<SongLibrary>>,
+    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
     active_streams: &ActiveStreams,
     current_stream_id: &mut Option<String>,
 ) -> Result<(), tokio_tungstenite::tungstenite::Error> {
@@ -110,6 +109,7 @@ async fn handle_text_message(
                 websocket_stream,
                 request,
                 song_library,
+                playlist_library,
                 active_streams,
                 current_stream_id,
             )
@@ -127,6 +127,7 @@ async fn handle_request(
     websocket_stream: &mut WebSocketStream<TcpStream>,
     request: ClientRequest,
     song_library: &Arc<Mutex<SongLibrary>>,
+    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
     active_streams: &ActiveStreams,
     current_stream_id: &mut Option<String>,
 ) -> Result<(), tokio_tungstenite::tungstenite::Error> {
@@ -155,6 +156,68 @@ async fn handle_request(
 
             websocket_stream.send(Message::Text(response)).await
         }
+        "list_playlists" => {
+            let response = match playlist_library.lock() {
+                Ok(library) => {
+                    let playlists = library
+                        .playlists()
+                        .into_iter()
+                        .map(PlaylistDto::from)
+                        .collect();
+
+                    serialize_response(&SuccessResponse::new(
+                        request.request_id,
+                        ListPlaylistsData { playlists },
+                    ))
+                }
+                Err(_) => serialize_response(&ErrorResponse::new(
+                    request.request_id,
+                    ErrorBody::internal_error(),
+                )),
+            };
+
+            websocket_stream.send(Message::Text(response)).await
+        }
+        "create_playlist" => match serde_json::from_value::<CreatePlaylistPayload>(request.payload)
+        {
+            Ok(payload) => {
+                let response = match playlist_library.lock() {
+                    Ok(mut library) => match library.create_playlist(&payload.name) {
+                        Ok(playlist) => serialize_response(&SuccessResponse::new(
+                            request.request_id,
+                            CreatePlaylistData {
+                                playlist: PlaylistDto::from(playlist),
+                            },
+                        )),
+                        Err(PlaylistLibraryError::InvalidName) => {
+                            serialize_response(&ErrorResponse::new(
+                                request.request_id,
+                                ErrorBody::invalid_playlist_name(),
+                            ))
+                        }
+                        Err(PlaylistLibraryError::AlreadyExists) => {
+                            serialize_response(&ErrorResponse::new(
+                                request.request_id,
+                                ErrorBody::playlist_already_exists(),
+                            ))
+                        }
+                    },
+                    Err(_) => serialize_response(&ErrorResponse::new(
+                        request.request_id,
+                        ErrorBody::internal_error(),
+                    )),
+                };
+
+                websocket_stream.send(Message::Text(response)).await
+            }
+            Err(_) => {
+                let response = serialize_response(&ErrorResponse::new(
+                    request.request_id,
+                    ErrorBody::invalid_payload(),
+                ));
+                websocket_stream.send(Message::Text(response)).await
+            }
+        },
         "search_songs" => {
             let response = match serde_json::from_value::<SearchSongsPayload>(request.payload) {
                 Ok(payload) => {
@@ -203,18 +266,14 @@ async fn handle_request(
             Ok(payload) => {
                 cleanup_stream_state(song_library, active_streams, current_stream_id);
                 let playback_song_result = match song_library.lock() {
-                    Ok(mut library) => {
-                        match library.find_song(&payload.song_id) {
-                            Some(song) => match library.set_active_song(&payload.song_id) {
-                                Ok(_) => Ok(song),
-                                Err(SongLibraryError::SongNotFound) => {
-                                    Err(ErrorBody::song_not_found())
-                                }
-                                Err(_) => Err(ErrorBody::stream_error()),
-                            },
-                            None => Err(ErrorBody::song_not_found()),
-                        }
-                    }
+                    Ok(mut library) => match library.find_song(&payload.song_id) {
+                        Some(song) => match library.set_active_song(&payload.song_id) {
+                            Ok(_) => Ok(song),
+                            Err(SongLibraryError::SongNotFound) => Err(ErrorBody::song_not_found()),
+                            Err(_) => Err(ErrorBody::stream_error()),
+                        },
+                        None => Err(ErrorBody::song_not_found()),
+                    },
                     Err(_) => Err(ErrorBody::internal_error()),
                 };
 
@@ -234,9 +293,13 @@ async fn handle_request(
 
                 match stream_result {
                     Ok((start_data, chunk_messages)) => {
-                        let initial_response =
-                            serialize_response(&SuccessResponse::new(request.request_id, start_data));
-                        websocket_stream.send(Message::Text(initial_response)).await?;
+                        let initial_response = serialize_response(&SuccessResponse::new(
+                            request.request_id,
+                            start_data,
+                        ));
+                        websocket_stream
+                            .send(Message::Text(initial_response))
+                            .await?;
 
                         for chunk_message in chunk_messages {
                             websocket_stream.send(Message::Text(chunk_message)).await?;
@@ -267,7 +330,9 @@ async fn handle_request(
             }
         },
         "stop_playback" => match serde_json::from_value::<StopPlaybackPayload>(request.payload) {
-            Ok(payload) if payload.song_id.trim().is_empty() || payload.stream_id.trim().is_empty() => {
+            Ok(payload)
+                if payload.song_id.trim().is_empty() || payload.stream_id.trim().is_empty() =>
+            {
                 let response = serialize_response(&ErrorResponse::new(
                     request.request_id,
                     ErrorBody::invalid_payload(),

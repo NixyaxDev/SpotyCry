@@ -38,7 +38,8 @@ pub async fn read_song_chunks(
                     true,
                     String::new(),
                 );
-                serialized_events.push(serde_json::to_string(&event).map_err(|_| "STREAM_ERROR".to_string())?);
+                serialized_events
+                    .push(serde_json::to_string(&event).map_err(|_| "STREAM_ERROR".to_string())?);
             }
             break;
         }
@@ -53,7 +54,8 @@ pub async fn read_song_chunks(
             encoded_bytes,
         );
 
-        serialized_events.push(serde_json::to_string(&event).map_err(|_| "STREAM_ERROR".to_string())?);
+        serialized_events
+            .push(serde_json::to_string(&event).map_err(|_| "STREAM_ERROR".to_string())?);
         chunk_index += 1;
 
         if is_last {

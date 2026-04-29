@@ -1,47 +1,66 @@
 import { SectionHeader } from '../components/SectionHeader'
-import type { Playlist } from '../types/music'
+import { CreatePlaylistForm } from '../features/playlists/components/CreatePlaylistForm'
+import { PlaylistList } from '../features/playlists/components/PlaylistList'
+import type { PlaylistDto } from '../features/playlists/types'
 
 type PlaylistsViewProps = {
-  playlists: Playlist[]
-  onOpenPlaylist: () => void
+  playlists: PlaylistDto[]
+  loading: boolean
+  error: string | null
+  createError: string | null
+  createLoading: boolean
+  onCreatePlaylist: (name: string) => Promise<boolean>
+  onOpenPlaylist: (playlistId: string) => void
+  onReload: () => void
 }
 
 export function PlaylistsView({
   playlists,
+  loading,
+  error,
+  createError,
+  createLoading,
+  onCreatePlaylist,
   onOpenPlaylist,
+  onReload,
 }: PlaylistsViewProps) {
   return (
     <>
       <SectionHeader
         title="Your Playlists"
-        subtitle="Curated sanctuaries for every mood."
+        subtitle="Collections created from the songs available on the server."
         stacked
       />
 
-      <section className="playlist-grid">
-        <button type="button" className="create-playlist-card">
-          <span className="material-symbols-outlined">add</span>
-          <span>Create New Playlist</span>
-        </button>
+      <section className="playlist-layout">
+        <CreatePlaylistForm
+          onSubmit={onCreatePlaylist}
+          loading={createLoading}
+          error={createError}
+        />
 
-        {playlists.map((playlist) => (
-          <article
-            key={playlist.id}
-            className="playlist-card"
-            onClick={onOpenPlaylist}
-          >
-            <div className="playlist-card-art">
-              <img src={playlist.cover} alt={playlist.name} />
-              <button type="button" className="floating-play" aria-label="Play playlist">
-                <span className="material-symbols-outlined fillable">play_arrow</span>
+        <div className="playlist-results">
+          {loading && <div className="feedback-card">Loading playlists...</div>}
+
+          {!loading && error && (
+            <div className="feedback-card feedback-card--error">
+              <p>{error}</p>
+              <button type="button" className="primary-button" onClick={onReload}>
+                Try again
               </button>
             </div>
-            <div className="playlist-card-body">
-              <h3>{playlist.name}</h3>
-              <p>{playlist.tracks} songs</p>
+          )}
+
+          {!loading && !error && playlists.length === 0 && (
+            <div className="feedback-card">
+              <p>No playlists created yet. They remain available while the server is running.</p>
             </div>
-          </article>
-        ))}
+          )}
+
+          {!loading && !error && playlists.length > 0 && (
+            <PlaylistList playlists={playlists} onOpenPlaylist={onOpenPlaylist} />
+          )}
+        </div>
       </section>
     </>
   )

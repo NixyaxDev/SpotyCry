@@ -42,6 +42,20 @@ impl ErrorBody {
         }
     }
 
+    pub fn invalid_playlist_name() -> Self {
+        Self {
+            code: "INVALID_PLAYLIST_NAME".to_string(),
+            message: "Playlist name cannot be empty".to_string(),
+        }
+    }
+
+    pub fn playlist_already_exists() -> Self {
+        Self {
+            code: "PLAYLIST_ALREADY_EXISTS".to_string(),
+            message: "A playlist with that name already exists".to_string(),
+        }
+    }
+
     pub fn song_not_found() -> Self {
         Self {
             code: "SONG_NOT_FOUND".to_string(),

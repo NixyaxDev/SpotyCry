@@ -13,6 +13,5 @@ export type Song = {
 export type Playlist = {
   id: string
   name: string
-  tracks: number
-  cover: string
+  songIds: string[]
 }

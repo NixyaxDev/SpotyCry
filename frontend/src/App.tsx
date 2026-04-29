@@ -3,11 +3,11 @@ import './App.css'
 import { PlayerBar } from './components/PlayerBar'
 import { Sidebar } from './components/Sidebar'
 import { TopBar } from './components/TopBar'
-import { playlists } from './data/mockData'
 import { usePlayback } from './features/playback/hooks/usePlayback'
+import { usePlaylists } from './features/playlists/hooks/usePlaylists'
 import { useSongs } from './features/songs/hooks/useSongs'
 import type { SongListItem } from './features/songs/types'
-import type { Screen, Song } from './types/music'
+import type { Playlist, Screen, Song } from './types/music'
 import { NowPlayingView } from './views/NowPlayingView'
 import { PlaylistDetailView } from './views/PlaylistDetailView'
 import { PlaylistsView } from './views/PlaylistsView'
@@ -18,6 +18,7 @@ const songCoverFallback =
 
 function App() {
   const [screen, setScreen] = useState<Screen>('songs')
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null)
   const {
     songs: serverSongs,
     loading: songsLoading,
@@ -26,6 +27,15 @@ function App() {
     searchValue,
     setSearchValue,
   } = useSongs()
+  const {
+    playlists,
+    loading: playlistsLoading,
+    error: playlistsError,
+    createError: playlistCreateError,
+    createLoading: playlistCreateLoading,
+    createPlaylist,
+    reload: reloadPlaylists,
+  } = usePlaylists()
   const {
     audioUrl,
     loading: playbackLoading,
@@ -62,6 +72,13 @@ function App() {
   const upNextSongs = currentSongId
     ? uiSongs.filter((song) => song.id !== currentSongId)
     : []
+  const uiPlaylists: Playlist[] = playlists.map((playlist) => ({
+    id: playlist.id,
+    name: playlist.name,
+    songIds: playlist.song_ids,
+  }))
+  const selectedPlaylist =
+    uiPlaylists.find((playlist) => playlist.id === selectedPlaylistId) ?? null
 
   return (
     <div className="app-shell">
@@ -89,12 +106,24 @@ function App() {
           {screen === 'playlists' && (
             <PlaylistsView
               playlists={playlists}
-              onOpenPlaylist={() => setScreen('playlist-detail')}
+              loading={playlistsLoading}
+              error={playlistsError}
+              createError={playlistCreateError}
+              createLoading={playlistCreateLoading}
+              onCreatePlaylist={createPlaylist}
+              onOpenPlaylist={handleOpenPlaylist}
+              onReload={reloadPlaylists}
             />
           )}
 
           {screen === 'playlist-detail' && (
-            <PlaylistDetailView songs={uiSongs} selectedSong={selectedSong} />
+            <PlaylistDetailView
+              playlist={selectedPlaylist}
+              songs={uiSongs.filter((song) =>
+                selectedPlaylist ? selectedPlaylist.songIds.includes(song.id) : true,
+              )}
+              selectedSong={selectedSong}
+            />
           )}
 
           {screen === 'now-playing' && (
@@ -134,6 +163,11 @@ function App() {
   async function handleAudioPause() {
     markAudioStopped()
     await stopPlayback()
+  }
+
+  function handleOpenPlaylist(playlistId: string) {
+    setSelectedPlaylistId(playlistId)
+    setScreen('playlist-detail')
   }
 }
 
