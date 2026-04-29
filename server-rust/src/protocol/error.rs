@@ -31,7 +31,7 @@ impl ErrorBody {
     pub fn invalid_search_criteria() -> Self {
         Self {
             code: "INVALID_SEARCH_CRITERIA".to_string(),
-            message: "Only title search is supported in HU-07".to_string(),
+            message: "Only title, artist, album and genre search are supported".to_string(),
         }
     }
 

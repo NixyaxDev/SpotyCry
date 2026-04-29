@@ -1,33 +1,42 @@
 import type { Song } from '../types/music'
 import { AudioPlayer } from '../features/playback/components/AudioPlayer'
+import type { AudioPlayerCommand } from '../features/playback/components/AudioPlayer'
+import { BackwardIcon, ForwardIcon, StopCircleIcon } from '../shared/icons'
 
 type PlayerBarProps = {
   song: Song | null
   audioUrl: string | null
-  playbackLoading: boolean
-  playbackError: string | null
-  isPlaying: boolean
+  audioCommand: AudioPlayerCommand
+  hasBufferedSong: boolean
+  hasPreviousSong: boolean
+  hasNextSong: boolean
   onAudioPlay: () => void
   onAudioPause: () => void
   onStopPlayback: () => void
+  onAudioEnded: () => void
+  onPlayPreviousSong: () => void
+  onPlayNextSong: () => void
 }
 
 export function PlayerBar({
   song,
   audioUrl,
-  playbackLoading,
-  playbackError,
-  isPlaying,
+  audioCommand,
+  hasBufferedSong,
+  hasPreviousSong,
+  hasNextSong,
   onAudioPlay,
   onAudioPause,
   onStopPlayback,
+  onAudioEnded,
+  onPlayPreviousSong,
+  onPlayNextSong,
 }: PlayerBarProps) {
   return (
     <footer className="player-bar">
       <div className="player-now">
         {song ? (
           <>
-            <img src={song.cover} alt={song.title} />
             <div>
               <strong>{song.title}</strong>
               <span>{song.artist}</span>
@@ -44,25 +53,24 @@ export function PlayerBar({
       <div className="player-center">
         <AudioPlayer
           audioUrl={audioUrl}
+          command={audioCommand}
           onPlay={onAudioPlay}
           onPause={onAudioPause}
-          onEnded={onStopPlayback}
+          onEnded={onAudioEnded}
         />
-        {playbackLoading && <span className="player-status">Buffering audio...</span>}
-        {playbackError && <span className="player-status player-status--error">{playbackError}</span>}
       </div>
 
       <div className="player-side">
-        {isPlaying && (
+        <button type="button" onClick={onPlayPreviousSong} disabled={!hasPreviousSong}>
+          <BackwardIcon />
+        </button>
+        {hasBufferedSong && (
           <button type="button" className="stop-button" onClick={onStopPlayback}>
-            <span className="material-symbols-outlined">stop_circle</span>
+            <StopCircleIcon />
           </button>
         )}
-        <button type="button">
-          <span className="material-symbols-outlined">favorite</span>
-        </button>
-        <button type="button">
-          <span className="material-symbols-outlined">volume_up</span>
+        <button type="button" onClick={onPlayNextSong} disabled={!hasNextSong}>
+          <ForwardIcon />
         </button>
       </div>
     </footer>

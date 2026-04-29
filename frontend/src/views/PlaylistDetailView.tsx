@@ -6,6 +6,7 @@ import { PlaylistSummary } from '../features/playlists/components/PlaylistSummar
 import type { PlaylistSummaryDto, SongDto as PlaylistSongDto } from '../features/playlists/types'
 import type { Song } from '../types/music'
 import type { Playlist } from '../types/music'
+import { ClockIcon, PlayIcon, QueueListIcon, SignalIcon } from '../shared/icons'
 
 type PlaylistDetailViewProps = {
   playlist: Playlist | null
@@ -24,12 +25,10 @@ type PlaylistDetailViewProps = {
     criteria: 'title' | 'artist' | 'duration',
     direction: 'asc' | 'desc',
   ) => Promise<void>
+  onPlayPlaylist: () => Promise<void>
   onResetSongView: () => void
   selectedSong: Song | null
 }
-
-const playlistCover =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuAyrc6FpM7hRBM0d12cHAPehjZD7sSeArtp7vFA-iW9lpnOMPTrhrvcEnQfff0uYSkf8FY7VgowcTZE_oFt-fZ0F_MjwQJpRWq6YXmxvB0kKCsBEB0uDeq-w4OAsU444teqad-lmqA8uyiLLc_y1f8CYmbG3YJs7TFVorhjHxNG8usrAlnc6hFFZkF3XbyWlVTwMlJ_1Dutjek8H9MV9QQxOjKm4gV6qTt8Nk8Z5YeBGBOLUf8i9e2oYDSFzS999bNPWHBHlaAON04'
 
 export function PlaylistDetailView({
   playlist,
@@ -42,6 +41,7 @@ export function PlaylistDetailView({
   onRemoveSong,
   onFilterSongs,
   onSortSongs,
+  onPlayPlaylist,
   onResetSongView,
   selectedSong,
 }: PlaylistDetailViewProps) {
@@ -54,11 +54,9 @@ export function PlaylistDetailView({
   return (
     <>
       <section className="playlist-hero">
-        <img
-          className="playlist-hero-cover"
-          src={playlistCover}
-          alt={playlist?.name ?? 'Playlist cover'}
-        />
+        <div className="playlist-hero-symbol" aria-hidden="true">
+          <QueueListIcon />
+        </div>
         <div className="playlist-hero-copy">
           <p className="eyebrow">Public Playlist</p>
           <h2>{playlist?.name ?? 'Playlist Detail'}</h2>
@@ -72,14 +70,15 @@ export function PlaylistDetailView({
             <span>Server-backed playlist</span>
           </div>
           <div className="playlist-actions">
-            <button type="button" className="play-button-large">
-              <span className="material-symbols-outlined fillable">play_arrow</span>
-            </button>
-            <button type="button" className="icon-button">
-              <span className="material-symbols-outlined">favorite_border</span>
-            </button>
-            <button type="button" className="icon-button">
-              <span className="material-symbols-outlined">more_horiz</span>
+            <button
+              type="button"
+              className="play-button-large"
+              onClick={() => {
+                void onPlayPlaylist()
+              }}
+              disabled={(playlist?.songIds.length ?? 0) === 0}
+            >
+              <PlayIcon />
             </button>
           </div>
         </div>
@@ -124,7 +123,7 @@ export function PlaylistDetailView({
           <span>Album</span>
           <span>Actions</span>
           <span>
-            <span className="material-symbols-outlined">schedule</span>
+            <ClockIcon />
           </span>
         </div>
         <div className="track-list">
@@ -136,13 +135,12 @@ export function PlaylistDetailView({
               >
                 <div className="track-index">
                   {song.id === selectedSong?.id ? (
-                    <span className="material-symbols-outlined">equalizer</span>
+                    <SignalIcon />
                   ) : (
                     index + 1
                   )}
                 </div>
                 <div className="track-title">
-                  <img src={song.cover} alt={song.title} />
                   <div>
                     <strong>{song.title}</strong>
                     <span>{song.artist}</span>

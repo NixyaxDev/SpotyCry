@@ -1,7 +1,15 @@
 import { useEffect, useRef } from 'react'
 
+export type AudioPlayerCommand =
+  | {
+      type: 'play' | 'pause'
+      token: number
+    }
+  | null
+
 type AudioPlayerProps = {
   audioUrl: string | null
+  command?: AudioPlayerCommand
   onPlay?: () => void
   onPause?: () => void
   onEnded?: () => void
@@ -9,6 +17,7 @@ type AudioPlayerProps = {
 
 export function AudioPlayer({
   audioUrl,
+  command = null,
   onPlay,
   onPause,
   onEnded,
@@ -38,6 +47,27 @@ export function AudioPlayer({
         // Autoplay can be blocked by the browser; controls remain available.
       })
   }, [audioUrl])
+
+  useEffect(() => {
+    if (!audioRef.current || !command) {
+      return
+    }
+
+    if (command.type === 'pause') {
+      ignorePauseRef.current = true
+      audioRef.current.pause()
+      window.setTimeout(() => {
+        ignorePauseRef.current = false
+      }, 0)
+      return
+    }
+
+    audioRef.current
+      .play()
+      .catch(() => {
+        // Autoplay can be blocked by the browser; controls remain available.
+      })
+  }, [command])
 
   return (
     <audio

@@ -46,6 +46,7 @@ export interface SongDto {
   id: string
   title: string
   artist: string | null
+  album: string | null
   genre: string | null
   duration: number | null
 }

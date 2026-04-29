@@ -9,6 +9,7 @@ pub struct SongDto {
     pub id: String,
     pub title: String,
     pub artist: Option<String>,
+    pub album: Option<String>,
     pub genre: Option<String>,
     pub duration: Option<u64>,
 }
@@ -19,6 +20,7 @@ impl From<SongSummary> for SongDto {
             id: summary.id,
             title: summary.title,
             artist: summary.artist,
+            album: summary.album,
             genre: summary.genre,
             duration: summary.duration,
         }

@@ -1,62 +1,150 @@
 import type { Song } from '../types/music'
+import {
+  BackwardIcon,
+  ForwardIcon,
+  MusicalNoteIcon,
+  PauseCircleIcon,
+  PlayCircleIcon,
+  QueueListIcon,
+  StopCircleIcon,
+} from '../shared/icons'
 
 type NowPlayingViewProps = {
   selectedSong: Song | null
-  upNext: Song[]
+  queueSongs: Song[]
+  currentQueueIndex: number
+  isPlaying: boolean
+  isPlaybackLoading: boolean
+  playbackError: string | null
+  hasBufferedSong: boolean
+  hasPreviousSong: boolean
+  hasNextSong: boolean
+  onPausePlayback: () => void
+  onResumePlayback: () => void
+  onStopPlayback: () => void
+  onPlayPreviousSong: () => void
+  onPlayNextSong: () => void
+  onPlaySong: (songId: string) => void
 }
-
-const heroCover =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBBxCSvndJYAv_cC0Ogi5-WgubOLHGcLag5nrT4JLtLrAqPbzFHjPADOTzCc5fqz3jRyDJrFm2veYIYlcepk_GJu5LxfxJhdBGjQbemOYfYwcraOA8ro7G5-Vui0XH7_vVrnpYzcDH7ze32-SQJY4x4cBQ9TCuaLCz9ZRhOLBXuxDXvgzm2cjoEHurDmhI8pzkaw01UwyEQMmNJTGQ4tYjZCf1HBC_F4jK1oaxhqXEBN5WAqrvrnFijK7y2XuCbP5pBSxSUdk9obhY'
 
 export function NowPlayingView({
   selectedSong,
-  upNext,
+  queueSongs,
+  currentQueueIndex,
+  isPlaying,
+  isPlaybackLoading,
+  playbackError,
+  hasBufferedSong,
+  hasPreviousSong,
+  hasNextSong,
+  onPausePlayback,
+  onResumePlayback,
+  onStopPlayback,
+  onPlayPreviousSong,
+  onPlayNextSong,
+  onPlaySong,
 }: NowPlayingViewProps) {
   return (
     <section className="now-playing-layout">
       <div className="now-playing-main">
         <div className="now-playing-art">
-          <img src={heroCover} alt="Echoes in the Rain" />
+          <MusicalNoteIcon />
+          <p>Only the current song is buffered locally in the browser.</p>
         </div>
         <div className="now-playing-copy">
           <h2>{selectedSong?.title ?? 'No song selected'}</h2>
           <p>{selectedSong?.artist ?? 'Load songs from the server to begin playback'}</p>
+          <div className="now-playing-meta">
+            <span>{selectedSong?.album ?? 'No album available'}</span>
+            <span>•</span>
+            <span>{selectedSong?.genre ?? 'No genre available'}</span>
+            <span>•</span>
+            <span>{selectedSong?.duration ?? 'Unknown duration'}</span>
+          </div>
+          <div className="now-playing-status-row">
+            <span className="status-pill">
+              {isPlaybackLoading
+                ? 'Buffering current song'
+                : isPlaying
+                  ? 'Playing from local buffer'
+                  : hasBufferedSong
+                    ? 'Buffered locally and ready'
+                    : 'No active local buffer'}
+            </span>
+          </div>
         </div>
         <div className="now-playing-controls">
-          <button type="button" className="ghost-icon">
-            <span className="material-symbols-outlined">shuffle</span>
+          <button
+            type="button"
+            className="ghost-icon"
+            disabled={!hasPreviousSong}
+            onClick={onPlayPreviousSong}
+          >
+            <BackwardIcon />
           </button>
-          <button type="button" className="ghost-icon">
-            <span className="material-symbols-outlined fillable">skip_previous</span>
+          <button
+            type="button"
+            className="play-button-xl"
+            disabled={!selectedSong || isPlaybackLoading}
+            onClick={isPlaying ? onPausePlayback : onResumePlayback}
+          >
+            {isPlaying ? <PauseCircleIcon /> : <PlayCircleIcon />}
           </button>
-          <button type="button" className="play-button-xl">
-            <span className="material-symbols-outlined fillable">pause</span>
+          <button
+            type="button"
+            className="ghost-icon"
+            disabled={!hasBufferedSong}
+            onClick={onStopPlayback}
+          >
+            <StopCircleIcon />
           </button>
-          <button type="button" className="ghost-icon">
-            <span className="material-symbols-outlined fillable">skip_next</span>
-          </button>
-          <button type="button" className="ghost-icon">
-            <span className="material-symbols-outlined">repeat</span>
+          <button
+            type="button"
+            className="ghost-icon"
+            disabled={!hasNextSong}
+            onClick={onPlayNextSong}
+          >
+            <ForwardIcon />
           </button>
         </div>
+        <p className="now-playing-helper">
+          Use the audio controls in the bottom player to seek forward or backward as many
+          times as you want while this current song remains buffered locally.
+        </p>
+        {playbackError && (
+          <div className="feedback-card feedback-card--error now-playing-feedback">
+            <p>{playbackError}</p>
+          </div>
+        )}
       </div>
 
       <aside className="up-next-panel">
         <div className="panel-title-row">
-          <h3>Up Next</h3>
-          <span className="material-symbols-outlined">queue</span>
+          <h3>Queue</h3>
+          <QueueListIcon />
         </div>
         <div className="up-next-list">
-          {upNext.length > 0 ? (
-            upNext.map((song) => (
-              <article key={song.id} className="up-next-item">
-                <img src={song.cover} alt={song.title} />
+          {queueSongs.length > 0 ? (
+            queueSongs.map((song, index) => (
+              <button
+                key={song.id}
+                type="button"
+                className={index === currentQueueIndex ? 'up-next-item is-current' : 'up-next-item'}
+                onClick={() => onPlaySong(song.id)}
+              >
                 <div>
+                  <small className="queue-marker">
+                    {index < currentQueueIndex
+                      ? 'Previous'
+                      : index === currentQueueIndex
+                        ? 'Now Playing'
+                        : 'Next'}
+                  </small>
                   <strong>{song.title}</strong>
                   <span>{song.artist}</span>
                 </div>
                 <time>{song.duration}</time>
-              </article>
+              </button>
             ))
           ) : (
             <div className="feedback-card">

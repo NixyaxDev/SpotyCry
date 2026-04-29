@@ -7,7 +7,6 @@ export type Song = {
   album: string
   genre: string
   duration: string
-  cover: string
 }
 
 export type Playlist = {

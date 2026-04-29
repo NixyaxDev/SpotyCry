@@ -25,6 +25,8 @@ function App() {
               loading={viewModel.songsState.loading}
               error={viewModel.songsState.error}
               onReload={viewModel.songsState.reload}
+              searchCriteria={viewModel.songsState.searchCriteria}
+              onSearchCriteriaChange={viewModel.songsState.setSearchCriteria}
               searchValue={viewModel.songsState.searchValue}
               onSearchChange={viewModel.songsState.setSearchValue}
               onPlay={viewModel.handlePlaySong}
@@ -43,6 +45,7 @@ function App() {
               createLoading={viewModel.playlistsState.createLoading}
               onCreatePlaylist={viewModel.playlistsState.createPlaylist}
               onOpenPlaylist={viewModel.handleOpenPlaylist}
+              onPlayPlaylist={viewModel.handlePlayPlaylistFromList}
               onReload={viewModel.playlistsState.reload}
             />
           )}
@@ -59,6 +62,7 @@ function App() {
               onRemoveSong={viewModel.handleRemoveSongFromPlaylist}
               onFilterSongs={viewModel.handleFilterPlaylistSongs}
               onSortSongs={viewModel.handleSortPlaylistSongs}
+              onPlayPlaylist={viewModel.handlePlaySelectedPlaylist}
               onResetSongView={viewModel.playlistsState.clearDetailSongs}
               selectedSong={viewModel.selectedSong}
             />
@@ -67,7 +71,20 @@ function App() {
           {viewModel.screen === 'now-playing' && (
             <NowPlayingView
               selectedSong={viewModel.selectedSong}
-              upNext={viewModel.upNextSongs}
+              queueSongs={viewModel.queueSongs}
+              currentQueueIndex={viewModel.currentQueueIndex}
+              isPlaying={viewModel.playbackState.isPlaying}
+              isPlaybackLoading={viewModel.playbackState.loading}
+              playbackError={viewModel.playbackState.error}
+              hasBufferedSong={viewModel.playbackState.audioUrl !== null}
+              hasPreviousSong={viewModel.hasPreviousSong}
+              hasNextSong={viewModel.hasNextSong}
+              onPausePlayback={viewModel.handlePauseBufferedSong}
+              onResumePlayback={viewModel.handleResumeBufferedSong}
+              onStopPlayback={viewModel.playbackState.stopPlayback}
+              onPlayPreviousSong={viewModel.handlePlayPreviousSong}
+              onPlayNextSong={viewModel.handlePlayNextSong}
+              onPlaySong={viewModel.handlePlaySong}
             />
           )}
         </main>
@@ -75,12 +92,16 @@ function App() {
         <PlayerBar
           song={viewModel.selectedSong}
           audioUrl={viewModel.playbackState.audioUrl}
-          playbackLoading={viewModel.playbackState.loading}
-          playbackError={viewModel.playbackState.error}
-          isPlaying={viewModel.playbackState.isPlaying}
+          audioCommand={viewModel.playbackState.audioCommand}
+          hasBufferedSong={viewModel.playbackState.audioUrl !== null}
+          hasPreviousSong={viewModel.hasPreviousSong}
+          hasNextSong={viewModel.hasNextSong}
           onAudioPlay={viewModel.playbackState.markAudioPlaying}
           onAudioPause={viewModel.handleAudioPause}
           onStopPlayback={viewModel.playbackState.stopPlayback}
+          onAudioEnded={viewModel.handleAudioEnded}
+          onPlayPreviousSong={viewModel.handlePlayPreviousSong}
+          onPlayNextSong={viewModel.handlePlayNextSong}
         />
       </div>
     </div>

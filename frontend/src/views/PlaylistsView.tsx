@@ -11,6 +11,7 @@ type PlaylistsViewProps = {
   createLoading: boolean
   onCreatePlaylist: (name: string) => Promise<boolean>
   onOpenPlaylist: (playlistId: string) => void
+  onPlayPlaylist: (playlistId: string) => void
   onReload: () => void
 }
 
@@ -22,6 +23,7 @@ export function PlaylistsView({
   createLoading,
   onCreatePlaylist,
   onOpenPlaylist,
+  onPlayPlaylist,
   onReload,
 }: PlaylistsViewProps) {
   return (
@@ -58,7 +60,11 @@ export function PlaylistsView({
           )}
 
           {!loading && !error && playlists.length > 0 && (
-            <PlaylistList playlists={playlists} onOpenPlaylist={onOpenPlaylist} />
+            <PlaylistList
+              playlists={playlists}
+              onOpenPlaylist={onOpenPlaylist}
+              onPlayPlaylist={onPlayPlaylist}
+            />
           )}
         </div>
       </section>

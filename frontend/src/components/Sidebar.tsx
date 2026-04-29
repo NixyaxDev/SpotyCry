@@ -1,4 +1,6 @@
+import type { ComponentType, SVGProps } from 'react'
 import type { Screen } from '../types/music'
+import { MusicalNoteIcon, PlayCircleIcon, QueueListIcon } from '../shared/icons'
 
 type SidebarProps = {
   screen: Screen
@@ -6,20 +8,20 @@ type SidebarProps = {
 }
 
 const navItems: Array<{
-  icon: string
+  icon: ComponentType<SVGProps<SVGSVGElement>>
   label: string
   screen: Screen
   matches: Screen[]
 }> = [
-  { icon: 'music_note', label: 'Songs', screen: 'songs', matches: ['songs'] },
+  { icon: MusicalNoteIcon, label: 'Songs', screen: 'songs', matches: ['songs'] },
   {
-    icon: 'queue_music',
+    icon: QueueListIcon,
     label: 'Playlists',
     screen: 'playlists',
     matches: ['playlists', 'playlist-detail'],
   },
   {
-    icon: 'play_circle',
+    icon: PlayCircleIcon,
     label: 'Now Playing',
     screen: 'now-playing',
     matches: ['now-playing'],
@@ -38,14 +40,14 @@ export function Sidebar({ screen, onNavigate }: SidebarProps) {
         {navItems.map((item) => (
           <button
             key={item.screen}
-            type="button"
-            className={item.matches.includes(screen) ? 'nav-item active' : 'nav-item'}
-            onClick={() => onNavigate(item.screen)}
-          >
-            <span className="material-symbols-outlined fillable">{item.icon}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
+          type="button"
+          className={item.matches.includes(screen) ? 'nav-item active' : 'nav-item'}
+          onClick={() => onNavigate(item.screen)}
+        >
+          <item.icon />
+          <span>{item.label}</span>
+        </button>
+      ))}
       </nav>
     </aside>
   )

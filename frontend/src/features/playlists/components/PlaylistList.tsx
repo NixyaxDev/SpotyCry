@@ -1,16 +1,16 @@
 import type { PlaylistDto } from '../types'
-
-const playlistCoverFallback =
-  'https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=800&q=80'
+import { PlayIcon, QueueListIcon } from '../../../shared/icons'
 
 type PlaylistListProps = {
   playlists: PlaylistDto[]
   onOpenPlaylist: (playlistId: string) => void
+  onPlayPlaylist: (playlistId: string) => void
 }
 
 export function PlaylistList({
   playlists,
   onOpenPlaylist,
+  onPlayPlaylist,
 }: PlaylistListProps) {
   return (
     <section className="playlist-grid">
@@ -21,9 +21,17 @@ export function PlaylistList({
           onClick={() => onOpenPlaylist(playlist.id)}
         >
           <div className="playlist-card-art">
-            <img src={playlistCoverFallback} alt={playlist.name} />
-            <button type="button" className="floating-play" aria-label="Open playlist">
-              <span className="material-symbols-outlined fillable">queue_music</span>
+            <QueueListIcon />
+            <button
+              type="button"
+              className="floating-play"
+              aria-label={`Play ${playlist.name}`}
+              onClick={(event) => {
+                event.stopPropagation()
+                onPlayPlaylist(playlist.id)
+              }}
+            >
+              <PlayIcon />
             </button>
           </div>
           <div className="playlist-card-body">
