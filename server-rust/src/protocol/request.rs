@@ -30,3 +30,28 @@ pub struct StopPlaybackPayload {
 pub struct CreatePlaylistPayload {
     pub name: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct PlaylistSongPayload {
+    pub playlist_id: String,
+    pub song_id: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FilterPlaylistSongsPayload {
+    pub playlist_id: String,
+    pub criteria: String,
+    pub value: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SortPlaylistSongsPayload {
+    pub playlist_id: String,
+    pub criteria: String,
+    pub direction: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct PlaylistSummaryPayload {
+    pub playlist_id: String,
+}

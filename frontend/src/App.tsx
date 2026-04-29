@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { PlayerBar } from './components/PlayerBar'
 import { Sidebar } from './components/Sidebar'
@@ -33,7 +33,17 @@ function App() {
     error: playlistsError,
     createError: playlistCreateError,
     createLoading: playlistCreateLoading,
+    detailSongs,
+    summary: playlistSummary,
+    detailError: playlistDetailError,
+    actionLoading: playlistActionLoading,
     createPlaylist,
+    addSongToPlaylist,
+    removeSongFromPlaylist,
+    filterPlaylistSongs,
+    sortPlaylistSongs,
+    loadPlaylistSummary,
+    clearDetailSongs,
     reload: reloadPlaylists,
   } = usePlaylists()
   const {
@@ -79,6 +89,29 @@ function App() {
   }))
   const selectedPlaylist =
     uiPlaylists.find((playlist) => playlist.id === selectedPlaylistId) ?? null
+  const selectedPlaylistBaseSongs = serverSongs.filter((song) =>
+    selectedPlaylist ? selectedPlaylist.songIds.includes(song.id) : false,
+  )
+  const selectedPlaylistViewSongs = (detailSongs ?? selectedPlaylistBaseSongs).map((song) => ({
+    id: song.id,
+    title: song.title,
+    artist: song.artist ?? 'Unknown artist',
+    album: 'Catalog track',
+    genre: song.genre ?? 'Unknown genre',
+    duration: formatDuration(song.duration),
+    cover: songCoverFallback,
+  }))
+  const availableSongsForPlaylist = serverSongs.filter(
+    (song) => !selectedPlaylist?.songIds.includes(song.id),
+  )
+
+  useEffect(() => {
+    if (!selectedPlaylistId) {
+      return
+    }
+
+    void loadPlaylistSummary(selectedPlaylistId)
+  }, [selectedPlaylistId, selectedPlaylist?.songIds.length])
 
   return (
     <div className="app-shell">
@@ -119,9 +152,16 @@ function App() {
           {screen === 'playlist-detail' && (
             <PlaylistDetailView
               playlist={selectedPlaylist}
-              songs={uiSongs.filter((song) =>
-                selectedPlaylist ? selectedPlaylist.songIds.includes(song.id) : true,
-              )}
+              songs={selectedPlaylistViewSongs}
+              availableSongs={availableSongsForPlaylist}
+              summary={playlistSummary}
+              error={playlistDetailError}
+              actionLoading={playlistActionLoading}
+              onAddSong={handleAddSongToPlaylist}
+              onRemoveSong={handleRemoveSongFromPlaylist}
+              onFilterSongs={handleFilterPlaylistSongs}
+              onSortSongs={handleSortPlaylistSongs}
+              onResetSongView={clearDetailSongs}
               selectedSong={selectedSong}
             />
           )}
@@ -166,8 +206,55 @@ function App() {
   }
 
   function handleOpenPlaylist(playlistId: string) {
+    clearDetailSongs()
     setSelectedPlaylistId(playlistId)
     setScreen('playlist-detail')
+  }
+
+  async function handleAddSongToPlaylist(songId: string) {
+    if (!selectedPlaylistId) {
+      return
+    }
+
+    const wasUpdated = await addSongToPlaylist(selectedPlaylistId, songId)
+
+    if (wasUpdated) {
+      await loadPlaylistSummary(selectedPlaylistId)
+    }
+  }
+
+  async function handleRemoveSongFromPlaylist(songId: string) {
+    if (!selectedPlaylistId) {
+      return
+    }
+
+    const wasUpdated = await removeSongFromPlaylist(selectedPlaylistId, songId)
+
+    if (wasUpdated) {
+      await loadPlaylistSummary(selectedPlaylistId)
+    }
+  }
+
+  async function handleFilterPlaylistSongs(
+    criteria: 'title' | 'artist' | 'genre',
+    value: string,
+  ) {
+    if (!selectedPlaylistId) {
+      return
+    }
+
+    await filterPlaylistSongs(selectedPlaylistId, criteria, value)
+  }
+
+  async function handleSortPlaylistSongs(
+    criteria: 'title' | 'artist' | 'duration',
+    direction: 'asc' | 'desc',
+  ) {
+    if (!selectedPlaylistId) {
+      return
+    }
+
+    await sortPlaylistSongs(selectedPlaylistId, criteria, direction)
   }
 }
 
