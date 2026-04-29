@@ -1,13 +1,16 @@
 import { recentSongs } from '../data/mockData'
-import type { Song } from '../types/music'
 import { SectionHeader } from '../components/SectionHeader'
+import { SongList } from '../features/songs/components/SongList'
+import type { SongListItem } from '../features/songs/types'
 
 type SongsViewProps = {
-  songs: Song[]
-  selectedSong: Song
+  songs: SongListItem[]
+  loading: boolean
+  error: string | null
+  onReload: () => void
 }
 
-export function SongsView({ songs, selectedSong }: SongsViewProps) {
+export function SongsView({ songs, loading, error, onReload }: SongsViewProps) {
   return (
     <>
       <SectionHeader
@@ -42,40 +45,27 @@ export function SongsView({ songs, selectedSong }: SongsViewProps) {
       </section>
 
       <section className="panel">
-        <div className="songs-table-shell">
-          <table className="songs-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Artist</th>
-                <th>Genre</th>
-                <th>
-                  <span className="material-symbols-outlined">schedule</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {songs.map((song, index) => (
-                <tr key={song.id} className={song.id === selectedSong.id ? 'is-current' : ''}>
-                  <td>{song.id === selectedSong.id ? '•' : index + 1}</td>
-                  <td>
-                    <div className="song-cell">
-                      <img src={song.cover} alt={song.title} />
-                      <div>
-                        <strong>{song.title}</strong>
-                        <span>{song.album}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{song.artist}</td>
-                  <td>{song.genre}</td>
-                  <td>{song.duration}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {loading && <div className="feedback-card">Loading songs...</div>}
+
+        {!loading && error && (
+          <div className="feedback-card feedback-card--error">
+            <p>{error}</p>
+            <button type="button" className="primary-button" onClick={onReload}>
+              Try again
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && songs.length === 0 && (
+          <div className="feedback-card">
+            <p>No songs available</p>
+            <button type="button" className="primary-button" onClick={onReload}>
+              Refresh
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && songs.length > 0 && <SongList songs={songs} />}
       </section>
     </>
   )

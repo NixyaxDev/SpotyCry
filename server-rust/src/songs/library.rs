@@ -3,6 +3,15 @@ use std::path::{Path, PathBuf};
 
 use crate::songs::Song;
 
+#[derive(Clone, Debug)]
+pub struct SongSummary {
+    pub id: String,
+    pub title: String,
+    pub artist: Option<String>,
+    pub genre: Option<String>,
+    pub duration: Option<u64>,
+}
+
 #[derive(Debug)]
 pub enum SongLibraryError {
     SongNotFound,
@@ -24,6 +33,19 @@ impl SongLibrary {
 
     pub fn songs(&self) -> &[Song] {
         &self.songs
+    }
+
+    pub fn song_summaries(&self) -> Vec<SongSummary> {
+        self.songs
+            .iter()
+            .map(|song| SongSummary {
+                id: song.id.clone(),
+                title: song.title.clone(),
+                artist: song.artist.clone(),
+                genre: song.genre.clone(),
+                duration: song.duration,
+            })
+            .collect()
     }
 
     pub fn active_songs(&self) -> Vec<&Song> {

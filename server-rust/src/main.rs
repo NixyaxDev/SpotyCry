@@ -1,5 +1,6 @@
 mod cli;
 mod network;
+mod protocol;
 mod songs;
 
 use std::sync::{Arc, Mutex};
