@@ -1,7 +1,7 @@
 import type { Song } from '../types/music'
 
 type NowPlayingViewProps = {
-  selectedSong: Song
+  selectedSong: Song | null
   upNext: Song[]
 }
 
@@ -19,8 +19,8 @@ export function NowPlayingView({
           <img src={heroCover} alt="Echoes in the Rain" />
         </div>
         <div className="now-playing-copy">
-          <h2>Echoes in the Rain</h2>
-          <p>{selectedSong.artist}</p>
+          <h2>{selectedSong?.title ?? 'No song selected'}</h2>
+          <p>{selectedSong?.artist ?? 'Load songs from the server to begin playback'}</p>
         </div>
         <div className="now-playing-controls">
           <button type="button" className="ghost-icon">
@@ -47,16 +47,22 @@ export function NowPlayingView({
           <span className="material-symbols-outlined">queue</span>
         </div>
         <div className="up-next-list">
-          {upNext.map((song) => (
-            <article key={song.id} className="up-next-item">
-              <img src={song.cover} alt={song.title} />
-              <div>
-                <strong>{song.title}</strong>
-                <span>{song.artist}</span>
-              </div>
-              <time>{song.duration}</time>
-            </article>
-          ))}
+          {upNext.length > 0 ? (
+            upNext.map((song) => (
+              <article key={song.id} className="up-next-item">
+                <img src={song.cover} alt={song.title} />
+                <div>
+                  <strong>{song.title}</strong>
+                  <span>{song.artist}</span>
+                </div>
+                <time>{song.duration}</time>
+              </article>
+            ))
+          ) : (
+            <div className="feedback-card">
+              <p>No songs queued</p>
+            </div>
+          )}
         </div>
       </aside>
     </section>

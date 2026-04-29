@@ -48,6 +48,26 @@ impl SongLibrary {
             .collect()
     }
 
+    pub fn search_by_title(&self, value: &str) -> Vec<SongSummary> {
+        let normalized_query = normalize_search_value(value);
+
+        if normalized_query.is_empty() {
+            return self.song_summaries();
+        }
+
+        self.songs
+            .iter()
+            .filter(|song| normalize_search_value(&song.title).contains(&normalized_query))
+            .map(|song| SongSummary {
+                id: song.id.clone(),
+                title: song.title.clone(),
+                artist: song.artist.clone(),
+                genre: song.genre.clone(),
+                duration: song.duration,
+            })
+            .collect()
+    }
+
     pub fn active_songs(&self) -> Vec<&Song> {
         self.songs.iter().filter(|song| song.is_active).collect()
     }
@@ -181,4 +201,8 @@ fn extract_song_metadata(path: &Path) -> Result<SongMetadata, String> {
 
 fn song_file_size(song: &Song) -> Option<u64> {
     fs::metadata(&song.file_path).ok().map(|metadata| metadata.len())
+}
+
+fn normalize_search_value(value: &str) -> String {
+    value.trim().to_lowercase()
 }

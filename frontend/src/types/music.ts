@@ -16,9 +16,3 @@ export type Playlist = {
   tracks: number
   cover: string
 }
-
-export type RecentSong = {
-  title: string
-  artist: string
-  cover: string
-}

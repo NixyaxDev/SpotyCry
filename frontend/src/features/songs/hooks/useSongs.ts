@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { sendWebSocketRequest } from '../../../api/websocketClient'
 import type { ServerSuccessResponse } from '../../../api/protocol'
-import type { ListSongsData, SongDto } from '../types'
+import type { ListSongsData, SearchSongsPayload, SongDto } from '../types'
 
 type UseSongsResult = {
   songs: SongDto[]
   loading: boolean
   error: string | null
   reload: () => void
+  searchValue: string
+  setSearchValue: (value: string) => void
 }
 
 export function useSongs(): UseSongsResult {
@@ -15,6 +17,7 @@ export function useSongs(): UseSongsResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
+  const [searchValue, setSearchValue] = useState('')
 
   useEffect(() => {
     let isMounted = true
@@ -24,11 +27,22 @@ export function useSongs(): UseSongsResult {
       setError(null)
 
       try {
-        const response = await sendWebSocketRequest<ListSongsData>({
-          request_id: `req-${Date.now()}`,
-          action: 'list_songs',
-          payload: {},
-        })
+        const trimmedValue = searchValue.trim()
+        const response =
+          trimmedValue.length === 0
+            ? await sendWebSocketRequest<ListSongsData>({
+                request_id: `req-${Date.now()}`,
+                action: 'list_songs',
+                payload: {},
+              })
+            : await sendWebSocketRequest<ListSongsData, SearchSongsPayload>({
+                request_id: `req-${Date.now()}`,
+                action: 'search_songs',
+                payload: {
+                  criteria: 'title',
+                  value: searchValue,
+                },
+              })
 
         if (!isMounted) {
           return
@@ -65,12 +79,14 @@ export function useSongs(): UseSongsResult {
     return () => {
       isMounted = false
     }
-  }, [reloadToken])
+  }, [reloadToken, searchValue])
 
   return {
     songs,
     loading,
     error,
     reload: () => setReloadToken((token) => token + 1),
+    searchValue,
+    setSearchValue,
   }
 }

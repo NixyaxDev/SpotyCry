@@ -10,6 +10,11 @@ export interface ListSongsData {
   songs: SongDto[]
 }
 
+export interface SearchSongsPayload {
+  criteria: 'title'
+  value: string
+}
+
 export interface SongListItem {
   id: string
   title: string

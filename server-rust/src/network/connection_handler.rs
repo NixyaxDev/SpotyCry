@@ -6,7 +6,7 @@ use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::WebSocketStream;
 
 use crate::protocol::error::ErrorBody;
-use crate::protocol::request::ClientRequest;
+use crate::protocol::request::{ClientRequest, SearchSongsPayload};
 use crate::protocol::response::{ErrorResponse, ListSongsData, SongDto, SuccessResponse};
 use crate::songs::SongLibrary;
 
@@ -108,6 +108,39 @@ fn handle_request(request: ClientRequest, song_library: &Arc<Mutex<SongLibrary>>
                 )),
             }
         }
+        "search_songs" => match serde_json::from_value::<SearchSongsPayload>(request.payload) {
+            Ok(payload) => {
+                if payload.criteria.trim().to_lowercase() != "title" {
+                    return serialize_response(&ErrorResponse::new(
+                        request.request_id,
+                        ErrorBody::invalid_search_criteria(),
+                    ));
+                }
+
+                match song_library.lock() {
+                    Ok(library) => {
+                        let songs = library
+                            .search_by_title(&payload.value)
+                            .into_iter()
+                            .map(SongDto::from)
+                            .collect();
+
+                        serialize_response(&SuccessResponse::new(
+                            request.request_id,
+                            ListSongsData { songs },
+                        ))
+                    }
+                    Err(_) => serialize_response(&ErrorResponse::new(
+                        request.request_id,
+                        ErrorBody::internal_error(),
+                    )),
+                }
+            }
+            Err(_) => serialize_response(&ErrorResponse::new(
+                request.request_id,
+                ErrorBody::invalid_payload(),
+            )),
+        },
         _ => serialize_response(&ErrorResponse::new(
             request.request_id,
             ErrorBody::unsupported_action(&request.action),
