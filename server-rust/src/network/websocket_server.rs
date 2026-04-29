@@ -1,19 +1,13 @@
-use std::sync::{Arc, Mutex};
-
 use tokio::net::TcpListener;
 use tokio::sync::watch;
 use tokio_tungstenite::accept_async;
 
 use crate::network::connection_handler::handle_connection;
-use crate::playback::active_streams::ActiveStreams;
-use crate::playlists::PlaylistLibrary;
-use crate::songs::SongLibrary;
+use crate::state::AppState;
 
 pub async fn start_server(
     address: &str,
-    song_library: Arc<Mutex<SongLibrary>>,
-    playlist_library: Arc<Mutex<PlaylistLibrary>>,
-    active_streams: ActiveStreams,
+    app_state: AppState,
     mut shutdown_receiver: watch::Receiver<bool>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let listener = TcpListener::bind(address).await?;
@@ -26,22 +20,14 @@ pub async fn start_server(
                 let (stream, client_address) = accept_result?;
 
                 println!("🔌 Nueva conexión TCP desde: {}", client_address);
-                let song_library = Arc::clone(&song_library);
-                let playlist_library = Arc::clone(&playlist_library);
-                let active_streams = Arc::clone(&active_streams);
+                let app_state = app_state.clone();
 
                 tokio::spawn(async move {
                     match accept_async(stream).await {
                         Ok(websocket_stream) => {
                             println!("✅ Handshake WebSocket completado con {}", client_address);
-                            handle_connection(
-                                websocket_stream,
-                                client_address.to_string(),
-                                song_library,
-                                playlist_library,
-                                active_streams,
-                            )
-                            .await;
+                            handle_connection(websocket_stream, client_address.to_string(), app_state)
+                                .await;
                         }
                         Err(error) => {
                             eprintln!(

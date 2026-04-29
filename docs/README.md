@@ -24,10 +24,14 @@ Esta carpeta reúne notas técnicas y funcionales del proyecto **SpotiCry** para
 - [results-and-analysis-notes.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/results-and-analysis-notes.md)
   Contiene ideas redactables para la sección de resultados generados y análisis de resultados.
 
+- [architecture-overview.md](/Users/adriana/Documents/GitHub/SpotyCry/docs/architecture-overview.md)
+  Explica la arquitectura recomendada del proyecto y la razón detrás de la distribución actual de carpetas.
+
 ## Nota
 
 Además de estos documentos, ya existe el archivo:
 
 - [HU-12-buffer-local-status.md](/Users/adriana/Documents/GitHub/SpotyCry/HU-12-buffer-local-status.md)
+- [HU-13-to-HU-18-playlists-status.md](/Users/adriana/Documents/GitHub/SpotyCry/HU-13-to-HU-18-playlists-status.md)
 
 Ese archivo mantiene una justificación puntual de la HU-12 y puede reutilizarse como anexo o evidencia de alcance.

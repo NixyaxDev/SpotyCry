@@ -1,19 +1,14 @@
-use std::sync::{Arc, Mutex};
-
 use futures_util::{SinkExt, StreamExt};
 use tokio::net::TcpStream;
 use tokio_tungstenite::tungstenite::Message;
 use tokio_tungstenite::WebSocketStream;
 use uuid::Uuid;
 
-use crate::playback::active_streams::{
-    register_stream, remove_stream, stream_song_id, ActiveStreams,
-};
+use crate::playback::active_streams::{register_stream, remove_stream, stream_song_id};
 use crate::playback::stream_service::read_song_chunks;
 use crate::playlists::{
     build_playlist_summary, filter_playlist_songs, parse_filter_criteria, parse_sort_criteria,
-    parse_sort_direction, sort_playlist_songs, PlaylistLibrary, PlaylistLibraryError,
-    PlaylistOperationError,
+    parse_sort_direction, sort_playlist_songs, PlaylistLibraryError, PlaylistOperationError,
 };
 use crate::protocol::error::ErrorBody;
 use crate::protocol::request::{
@@ -25,15 +20,13 @@ use crate::protocol::response::{
     CreatePlaylistData, ErrorResponse, ListPlaylistsData, ListSongsData, PlaylistData, PlaylistDto,
     PlaylistSummaryData, PlaylistSummaryDto, SongDto, StopPlaybackData, SuccessResponse,
 };
-use crate::songs::SongLibrary;
 use crate::songs::SongLibraryError;
+use crate::state::AppState;
 
 pub async fn handle_connection(
     mut websocket_stream: WebSocketStream<TcpStream>,
     client_address: String,
-    song_library: Arc<Mutex<SongLibrary>>,
-    playlist_library: Arc<Mutex<PlaylistLibrary>>,
-    active_streams: ActiveStreams,
+    app_state: AppState,
 ) {
     println!("👤 Cliente conectado: {}", client_address);
     let mut current_stream_id: Option<String> = None;
@@ -46,9 +39,7 @@ pub async fn handle_connection(
                 if let Err(error) = handle_text_message(
                     &mut websocket_stream,
                     &text,
-                    &song_library,
-                    &playlist_library,
-                    &active_streams,
+                    &app_state,
                     &mut current_stream_id,
                 )
                 .await
@@ -96,29 +87,19 @@ pub async fn handle_connection(
         }
     }
 
-    cleanup_stream_state(&song_library, &active_streams, &mut current_stream_id);
+    cleanup_stream_state(&app_state, &mut current_stream_id);
     println!("🧹 Conexión finalizada: {}", client_address);
 }
 
 async fn handle_text_message(
     websocket_stream: &mut WebSocketStream<TcpStream>,
     text: &str,
-    song_library: &Arc<Mutex<SongLibrary>>,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
-    active_streams: &ActiveStreams,
+    app_state: &AppState,
     current_stream_id: &mut Option<String>,
 ) -> Result<(), tokio_tungstenite::tungstenite::Error> {
     match serde_json::from_str::<ClientRequest>(text) {
         Ok(request) => {
-            handle_request(
-                websocket_stream,
-                request,
-                song_library,
-                playlist_library,
-                active_streams,
-                current_stream_id,
-            )
-            .await
+            handle_request(websocket_stream, request, app_state, current_stream_id).await
         }
         Err(_) => {
             let response =
@@ -131,16 +112,14 @@ async fn handle_text_message(
 async fn handle_request(
     websocket_stream: &mut WebSocketStream<TcpStream>,
     request: ClientRequest,
-    song_library: &Arc<Mutex<SongLibrary>>,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
-    active_streams: &ActiveStreams,
+    app_state: &AppState,
     current_stream_id: &mut Option<String>,
 ) -> Result<(), tokio_tungstenite::tungstenite::Error> {
     match request.action.as_str() {
         "list_songs" => {
             let _ = &request.payload;
 
-            let response = match song_library.lock() {
+            let response = match app_state.songs.lock() {
                 Ok(library) => {
                     let songs = library
                         .song_summaries()
@@ -162,7 +141,7 @@ async fn handle_request(
             websocket_stream.send(Message::Text(response)).await
         }
         "list_playlists" => {
-            let response = match playlist_library.lock() {
+            let response = match app_state.playlists.lock() {
                 Ok(library) => {
                     let playlists = library
                         .playlists()
@@ -186,7 +165,7 @@ async fn handle_request(
         "create_playlist" => match serde_json::from_value::<CreatePlaylistPayload>(request.payload)
         {
             Ok(payload) => {
-                let response = match playlist_library.lock() {
+                let response = match app_state.playlists.lock() {
                     Ok(mut library) => match library.create_playlist(&payload.name) {
                         Ok(playlist) => serialize_response(&SuccessResponse::new(
                             request.request_id,
@@ -228,12 +207,8 @@ async fn handle_request(
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Ok(payload) => {
-                    let response = handle_add_song_to_playlist(
-                        request.request_id,
-                        payload,
-                        song_library,
-                        playlist_library,
-                    );
+                    let response =
+                        handle_add_song_to_playlist(request.request_id, payload, app_state);
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Err(_) => {
@@ -258,11 +233,8 @@ async fn handle_request(
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Ok(payload) => {
-                    let response = handle_remove_song_from_playlist(
-                        request.request_id,
-                        payload,
-                        playlist_library,
-                    );
+                    let response =
+                        handle_remove_song_from_playlist(request.request_id, payload, app_state);
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Err(_) => {
@@ -287,12 +259,8 @@ async fn handle_request(
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Ok(payload) => {
-                    let response = handle_filter_playlist_songs(
-                        request.request_id,
-                        payload,
-                        song_library,
-                        playlist_library,
-                    );
+                    let response =
+                        handle_filter_playlist_songs(request.request_id, payload, app_state);
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Err(_) => {
@@ -318,12 +286,8 @@ async fn handle_request(
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Ok(payload) => {
-                    let response = handle_sort_playlist_songs(
-                        request.request_id,
-                        payload,
-                        song_library,
-                        playlist_library,
-                    );
+                    let response =
+                        handle_sort_playlist_songs(request.request_id, payload, app_state);
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Err(_) => {
@@ -345,12 +309,8 @@ async fn handle_request(
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Ok(payload) => {
-                    let response = handle_get_playlist_summary(
-                        request.request_id,
-                        payload,
-                        song_library,
-                        playlist_library,
-                    );
+                    let response =
+                        handle_get_playlist_summary(request.request_id, payload, app_state);
                     websocket_stream.send(Message::Text(response)).await
                 }
                 Err(_) => {
@@ -371,7 +331,7 @@ async fn handle_request(
                             ErrorBody::invalid_search_criteria(),
                         ))
                     } else {
-                        match song_library.lock() {
+                        match app_state.songs.lock() {
                             Ok(library) => {
                                 let songs = library
                                     .search_by_title(&payload.value)
@@ -408,8 +368,8 @@ async fn handle_request(
                 websocket_stream.send(Message::Text(response)).await
             }
             Ok(payload) => {
-                cleanup_stream_state(song_library, active_streams, current_stream_id);
-                let playback_song_result = match song_library.lock() {
+                cleanup_stream_state(app_state, current_stream_id);
+                let playback_song_result = match app_state.songs.lock() {
                     Ok(mut library) => match library.find_song(&payload.song_id) {
                         Some(song) => match library.set_active_song(&payload.song_id) {
                             Ok(_) => Ok(song),
@@ -430,7 +390,11 @@ async fn handle_request(
                 };
 
                 let stream_id = format!("stream-{}", Uuid::new_v4());
-                register_stream(active_streams, stream_id.clone(), payload.song_id.clone());
+                register_stream(
+                    &app_state.active_streams,
+                    stream_id.clone(),
+                    payload.song_id.clone(),
+                );
                 *current_stream_id = Some(stream_id.clone());
 
                 let stream_result = read_song_chunks(&playback_song, stream_id.clone()).await;
@@ -452,7 +416,7 @@ async fn handle_request(
                         Ok(())
                     }
                     Err(error_code) => {
-                        cleanup_stream_state(song_library, active_streams, current_stream_id);
+                        cleanup_stream_state(app_state, current_stream_id);
                         let error = match error_code.as_str() {
                             "FILE_NOT_FOUND" => ErrorBody::file_not_found(),
                             "STREAM_ERROR" => ErrorBody::stream_error(),
@@ -484,13 +448,14 @@ async fn handle_request(
                 websocket_stream.send(Message::Text(response)).await
             }
             Ok(payload) => {
-                let registered_song_id = stream_song_id(active_streams, &payload.stream_id);
+                let registered_song_id =
+                    stream_song_id(&app_state.active_streams, &payload.stream_id);
 
                 match registered_song_id {
                     Some(song_id) if song_id == payload.song_id => {
-                        remove_stream(active_streams, &payload.stream_id);
+                        remove_stream(&app_state.active_streams, &payload.stream_id);
 
-                        if let Ok(mut library) = song_library.lock() {
+                        if let Ok(mut library) = app_state.songs.lock() {
                             library.clear_active_song(&payload.song_id);
                         }
 
@@ -550,14 +515,10 @@ async fn send_protocol_error(
     websocket_stream.send(Message::Text(response)).await
 }
 
-fn cleanup_stream_state(
-    song_library: &Arc<Mutex<SongLibrary>>,
-    active_streams: &ActiveStreams,
-    current_stream_id: &mut Option<String>,
-) {
+fn cleanup_stream_state(app_state: &AppState, current_stream_id: &mut Option<String>) {
     if let Some(stream_id) = current_stream_id.take() {
-        if let Some(song_id) = remove_stream(active_streams, &stream_id) {
-            if let Ok(mut library) = song_library.lock() {
+        if let Some(song_id) = remove_stream(&app_state.active_streams, &stream_id) {
+            if let Ok(mut library) = app_state.songs.lock() {
                 library.clear_active_song(&song_id);
             }
         }
@@ -567,10 +528,9 @@ fn cleanup_stream_state(
 fn handle_add_song_to_playlist(
     request_id: String,
     payload: PlaylistSongPayload,
-    song_library: &Arc<Mutex<SongLibrary>>,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
+    app_state: &AppState,
 ) -> String {
-    let song_exists = match song_library.lock() {
+    let song_exists = match app_state.songs.lock() {
         Ok(library) => library.has_song(&payload.song_id),
         Err(_) => {
             return serialize_response(&ErrorResponse::new(request_id, ErrorBody::internal_error()))
@@ -581,7 +541,7 @@ fn handle_add_song_to_playlist(
         return serialize_response(&ErrorResponse::new(request_id, ErrorBody::song_not_found()));
     }
 
-    match playlist_library.lock() {
+    match app_state.playlists.lock() {
         Ok(mut library) => {
             match library.add_song_to_playlist(&payload.playlist_id, &payload.song_id) {
                 Ok(playlist) => serialize_response(&SuccessResponse::new(
@@ -603,9 +563,9 @@ fn handle_add_song_to_playlist(
 fn handle_remove_song_from_playlist(
     request_id: String,
     payload: PlaylistSongPayload,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
+    app_state: &AppState,
 ) -> String {
-    match playlist_library.lock() {
+    match app_state.playlists.lock() {
         Ok(mut library) => {
             match library.remove_song_from_playlist(&payload.playlist_id, &payload.song_id) {
                 Ok(playlist) => serialize_response(&SuccessResponse::new(
@@ -627,8 +587,7 @@ fn handle_remove_song_from_playlist(
 fn handle_filter_playlist_songs(
     request_id: String,
     payload: FilterPlaylistSongsPayload,
-    song_library: &Arc<Mutex<SongLibrary>>,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
+    app_state: &AppState,
 ) -> String {
     let criteria = match parse_filter_criteria(&payload.criteria) {
         Ok(criteria) => criteria,
@@ -643,7 +602,7 @@ fn handle_filter_playlist_songs(
         }
     };
 
-    let playlist = match playlist_library.lock() {
+    let playlist = match app_state.playlists.lock() {
         Ok(library) => match library.find_playlist(&payload.playlist_id) {
             Some(playlist) => playlist,
             None => {
@@ -658,7 +617,7 @@ fn handle_filter_playlist_songs(
         }
     };
 
-    match song_library.lock() {
+    match app_state.songs.lock() {
         Ok(library) => {
             let playlist_songs = library.song_summaries_by_ids(&playlist.song_ids);
             let songs = filter_playlist_songs(&playlist_songs, criteria, &payload.value)
@@ -675,8 +634,7 @@ fn handle_filter_playlist_songs(
 fn handle_sort_playlist_songs(
     request_id: String,
     payload: SortPlaylistSongsPayload,
-    song_library: &Arc<Mutex<SongLibrary>>,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
+    app_state: &AppState,
 ) -> String {
     let criteria = match parse_sort_criteria(&payload.criteria) {
         Ok(criteria) => criteria,
@@ -704,7 +662,7 @@ fn handle_sort_playlist_songs(
         }
     };
 
-    let playlist = match playlist_library.lock() {
+    let playlist = match app_state.playlists.lock() {
         Ok(library) => match library.find_playlist(&payload.playlist_id) {
             Some(playlist) => playlist,
             None => {
@@ -719,7 +677,7 @@ fn handle_sort_playlist_songs(
         }
     };
 
-    match song_library.lock() {
+    match app_state.songs.lock() {
         Ok(library) => {
             let playlist_songs = library.song_summaries_by_ids(&playlist.song_ids);
             let songs = sort_playlist_songs(&playlist_songs, criteria, direction)
@@ -736,10 +694,9 @@ fn handle_sort_playlist_songs(
 fn handle_get_playlist_summary(
     request_id: String,
     payload: PlaylistSummaryPayload,
-    song_library: &Arc<Mutex<SongLibrary>>,
-    playlist_library: &Arc<Mutex<PlaylistLibrary>>,
+    app_state: &AppState,
 ) -> String {
-    let playlist = match playlist_library.lock() {
+    let playlist = match app_state.playlists.lock() {
         Ok(library) => match library.find_playlist(&payload.playlist_id) {
             Some(playlist) => playlist,
             None => {
@@ -754,7 +711,7 @@ fn handle_get_playlist_summary(
         }
     };
 
-    match song_library.lock() {
+    match app_state.songs.lock() {
         Ok(library) => {
             let summary =
                 build_playlist_summary(&library.song_summaries_by_ids(&playlist.song_ids));
