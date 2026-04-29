@@ -1,10 +1,23 @@
 import type { Song } from '../types/music'
+import { AudioPlayer } from '../features/playback/components/AudioPlayer'
 
 type PlayerBarProps = {
   song: Song | null
+  audioUrl: string | null
+  playbackLoading: boolean
+  playbackError: string | null
+  isPlaying: boolean
+  onStopPlayback: () => void
 }
 
-export function PlayerBar({ song }: PlayerBarProps) {
+export function PlayerBar({
+  song,
+  audioUrl,
+  playbackLoading,
+  playbackError,
+  isPlaying,
+  onStopPlayback,
+}: PlayerBarProps) {
   return (
     <footer className="player-bar">
       <div className="player-now">
@@ -25,33 +38,17 @@ export function PlayerBar({ song }: PlayerBarProps) {
       </div>
 
       <div className="player-center">
-        <div className="player-actions">
-          <button type="button">
-            <span className="material-symbols-outlined">shuffle</span>
-          </button>
-          <button type="button">
-            <span className="material-symbols-outlined fillable">skip_previous</span>
-          </button>
-          <button type="button" className="player-main-button">
-            <span className="material-symbols-outlined fillable">play_arrow</span>
-          </button>
-          <button type="button">
-            <span className="material-symbols-outlined fillable">skip_next</span>
-          </button>
-          <button type="button">
-            <span className="material-symbols-outlined">repeat</span>
-          </button>
-        </div>
-        <div className="progress-row">
-          <span>1:24</span>
-          <div className="progress-track">
-            <div className="progress-fill" />
-          </div>
-          <span>4:15</span>
-        </div>
+        <AudioPlayer audioUrl={audioUrl} onEnded={onStopPlayback} />
+        {playbackLoading && <span className="player-status">Buffering audio...</span>}
+        {playbackError && <span className="player-status player-status--error">{playbackError}</span>}
       </div>
 
       <div className="player-side">
+        {isPlaying && (
+          <button type="button" className="stop-button" onClick={onStopPlayback}>
+            <span className="material-symbols-outlined">stop_circle</span>
+          </button>
+        )}
         <button type="button">
           <span className="material-symbols-outlined">favorite</span>
         </button>

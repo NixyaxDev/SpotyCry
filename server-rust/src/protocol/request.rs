@@ -14,3 +14,14 @@ pub struct SearchSongsPayload {
     pub criteria: String,
     pub value: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct StartPlaybackPayload {
+    pub song_id: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct StopPlaybackPayload {
+    pub stream_id: String,
+    pub song_id: String,
+}

@@ -41,4 +41,32 @@ impl ErrorBody {
             message: "Request payload is invalid".to_string(),
         }
     }
+
+    pub fn song_not_found() -> Self {
+        Self {
+            code: "SONG_NOT_FOUND".to_string(),
+            message: "Song not found".to_string(),
+        }
+    }
+
+    pub fn file_not_found() -> Self {
+        Self {
+            code: "FILE_NOT_FOUND".to_string(),
+            message: "Song file was not found on disk".to_string(),
+        }
+    }
+
+    pub fn stream_error() -> Self {
+        Self {
+            code: "STREAM_ERROR".to_string(),
+            message: "Could not stream the selected song".to_string(),
+        }
+    }
+
+    pub fn playback_not_found() -> Self {
+        Self {
+            code: "STREAM_ERROR".to_string(),
+            message: "Playback stream not found".to_string(),
+        }
+    }
 }
