@@ -9,6 +9,10 @@ type SongsViewProps = {
   onReload: () => void
   searchValue: string
   onSearchChange: (value: string) => void
+  onPlay: (songId: string) => void
+  isPlaybackLoading: boolean
+  activeSongId: string | null
+  isPlaying: boolean
 }
 
 export function SongsView({
@@ -18,6 +22,10 @@ export function SongsView({
   onReload,
   searchValue,
   onSearchChange,
+  onPlay,
+  isPlaybackLoading,
+  activeSongId,
+  isPlaying,
 }: SongsViewProps) {
   return (
     <>
@@ -51,7 +59,15 @@ export function SongsView({
           </div>
         )}
 
-        {!loading && !error && songs.length > 0 && <SongList songs={songs} />}
+        {!loading && !error && songs.length > 0 && (
+          <SongList
+            songs={songs}
+            onPlay={onPlay}
+            isPlaybackLoading={isPlaybackLoading}
+            activeSongId={activeSongId}
+            isPlaying={isPlaying}
+          />
+        )}
       </section>
     </>
   )

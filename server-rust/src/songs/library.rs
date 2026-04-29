@@ -68,6 +68,10 @@ impl SongLibrary {
             .collect()
     }
 
+    pub fn find_song(&self, song_id: &str) -> Option<Song> {
+        self.songs.iter().find(|song| song.id == song_id).cloned()
+    }
+
     pub fn active_songs(&self) -> Vec<&Song> {
         self.songs.iter().filter(|song| song.is_active).collect()
     }
@@ -136,6 +140,12 @@ impl SongLibrary {
             .find(|song| song.id == song_id)
             .map(|song| song.is_active)
             .unwrap_or(false)
+    }
+
+    pub fn clear_active_song(&mut self, song_id: &str) {
+        if let Some(song) = self.songs.iter_mut().find(|song| song.id == song_id) {
+            song.is_active = false;
+        }
     }
 
     fn is_duplicate(&self, normalized_path: &Path, title: &str, file_size: u64) -> bool {

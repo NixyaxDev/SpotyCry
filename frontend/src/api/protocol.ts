@@ -22,3 +22,7 @@ export interface ServerErrorResponse {
 export type ServerResponse<T = unknown> =
   | ServerSuccessResponse<T>
   | ServerErrorResponse
+
+export interface StartPlaybackPayload {
+  song_id: string
+}

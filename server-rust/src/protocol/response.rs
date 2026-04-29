@@ -30,6 +30,22 @@ pub struct ListSongsData {
 }
 
 #[derive(Debug, Serialize)]
+pub struct StartPlaybackData {
+    pub stream_id: String,
+    pub song_id: String,
+    pub title: String,
+    pub mime_type: String,
+    pub chunk_size: usize,
+}
+
+#[derive(Debug, Serialize)]
+pub struct StopPlaybackData {
+    pub stream_id: String,
+    pub song_id: String,
+    pub stopped: bool,
+}
+
+#[derive(Debug, Serialize)]
 pub struct SuccessResponse<T: Serialize> {
     pub request_id: String,
     pub status: &'static str,

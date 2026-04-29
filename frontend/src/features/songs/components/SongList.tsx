@@ -2,9 +2,19 @@ import type { SongListItem } from '../types'
 
 type SongListProps = {
   songs: SongListItem[]
+  onPlay: (songId: string) => void
+  isPlaybackLoading: boolean
+  activeSongId: string | null
+  isPlaying: boolean
 }
 
-export function SongList({ songs }: SongListProps) {
+export function SongList({
+  songs,
+  onPlay,
+  isPlaybackLoading,
+  activeSongId,
+  isPlaying,
+}: SongListProps) {
   return (
     <div className="songs-table-shell">
       <table className="songs-table">
@@ -14,6 +24,7 @@ export function SongList({ songs }: SongListProps) {
             <th>Title</th>
             <th>Artist</th>
             <th>Genre</th>
+            <th>Play</th>
             <th>
               <span className="material-symbols-outlined">schedule</span>
             </th>
@@ -21,7 +32,7 @@ export function SongList({ songs }: SongListProps) {
         </thead>
         <tbody>
           {songs.map((song, index) => (
-            <tr key={song.id}>
+            <tr key={song.id} className={song.id === activeSongId ? 'is-current' : ''}>
               <td>{index + 1}</td>
               <td>
                 <div className="song-cell">
@@ -34,6 +45,20 @@ export function SongList({ songs }: SongListProps) {
               </td>
               <td>{song.artist}</td>
               <td>{song.genre}</td>
+              <td>
+                <button
+                  type="button"
+                  className="table-play-button"
+                  onClick={() => onPlay(song.id)}
+                  disabled={isPlaybackLoading}
+                >
+                  <span className="material-symbols-outlined fillable">
+                    {song.id === activeSongId && isPlaying
+                      ? 'stop_circle'
+                      : 'play_circle'}
+                  </span>
+                </button>
+              </td>
               <td>{song.duration}</td>
             </tr>
           ))}

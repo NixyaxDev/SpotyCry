@@ -353,6 +353,11 @@
   text-align: right;
 }
 
+.songs-table thead th:nth-last-child(2),
+.songs-table tbody td:nth-last-child(2) {
+  text-align: center;
+}
+
 .songs-table tbody tr {
   transition: background-color 180ms ease;
 }
@@ -454,6 +459,22 @@
   display: block;
   font-size: 0.85rem;
   color: var(--on-surface-variant);
+}
+
+.table-play-button {
+  border: 0;
+  background: transparent;
+  color: var(--primary-container);
+  cursor: pointer;
+}
+
+.table-play-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.table-play-button .material-symbols-outlined {
+  font-size: 1.75rem;
 }
 
 .playlist-grid {
@@ -830,6 +851,19 @@
   gap: 0.6rem;
 }
 
+.audio-player {
+  width: min(100%, 32rem);
+}
+
+.player-status {
+  color: var(--on-surface-variant);
+  font-size: 0.8rem;
+}
+
+.player-status--error {
+  color: #ffb4ab;
+}
+
 .player-actions {
   display: flex;
   align-items: center;
@@ -863,6 +897,17 @@
 .player-side {
   justify-content: flex-end;
   gap: 0.75rem;
+}
+
+.stop-button {
+  border: 0;
+  background: transparent;
+  color: #ffb4ab;
+  cursor: pointer;
+}
+
+.stop-button .material-symbols-outlined {
+  font-size: 1.8rem;
 }
 
 .fillable {

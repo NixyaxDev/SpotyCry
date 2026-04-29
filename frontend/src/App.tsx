@@ -4,6 +4,7 @@ import { PlayerBar } from './components/PlayerBar'
 import { Sidebar } from './components/Sidebar'
 import { TopBar } from './components/TopBar'
 import { playlists } from './data/mockData'
+import { usePlayback } from './features/playback/hooks/usePlayback'
 import { useSongs } from './features/songs/hooks/useSongs'
 import type { SongListItem } from './features/songs/types'
 import type { Screen, Song } from './types/music'
@@ -25,6 +26,17 @@ function App() {
     searchValue,
     setSearchValue,
   } = useSongs()
+  const {
+    audioUrl,
+    loading: playbackLoading,
+    error: playbackError,
+    currentSongId,
+    isPlaying,
+    startPlayback,
+    stopPlayback,
+    markAudioPlaying,
+    markAudioStopped,
+  } = usePlayback()
 
   const songListItems: SongListItem[] = serverSongs.map((song) => ({
     id: song.id,
@@ -46,8 +58,10 @@ function App() {
     cover: song.cover,
   }))
 
-  const selectedSong = uiSongs[0] ?? null
-  const upNextSongs = uiSongs.slice(1)
+  const selectedSong = uiSongs.find((song) => song.id === currentSongId) ?? null
+  const upNextSongs = currentSongId
+    ? uiSongs.filter((song) => song.id !== currentSongId)
+    : []
 
   return (
     <div className="app-shell">
@@ -65,6 +79,10 @@ function App() {
               onReload={reloadSongs}
               searchValue={searchValue}
               onSearchChange={setSearchValue}
+              onPlay={handlePlaySong}
+              isPlaybackLoading={playbackLoading}
+              activeSongId={currentSongId}
+              isPlaying={isPlaying}
             />
           )}
 
@@ -84,10 +102,39 @@ function App() {
           )}
         </main>
 
-        <PlayerBar song={selectedSong} />
+        <PlayerBar
+          song={selectedSong}
+          audioUrl={audioUrl}
+          playbackLoading={playbackLoading}
+          playbackError={playbackError}
+          isPlaying={isPlaying}
+          onAudioPlay={markAudioPlaying}
+          onAudioPause={handleAudioPause}
+          onStopPlayback={stopPlayback}
+        />
       </div>
     </div>
   )
+
+  async function handlePlaySong(songId: string) {
+    if (currentSongId === songId && isPlaying) {
+      await stopPlayback()
+      return
+    }
+
+    const songToPlay = uiSongs.find((song) => song.id === songId)
+
+    if (!songToPlay) {
+      return
+    }
+
+    await startPlayback(songToPlay)
+  }
+
+  async function handleAudioPause() {
+    markAudioStopped()
+    await stopPlayback()
+  }
 }
 
 function formatDuration(duration: number | null): string {
