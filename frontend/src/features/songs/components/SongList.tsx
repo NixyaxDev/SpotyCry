@@ -5,6 +5,7 @@ type SongListProps = {
   onPlay: (songId: string) => void
   isPlaybackLoading: boolean
   activeSongId: string | null
+  isPlaying: boolean
 }
 
 export function SongList({
@@ -12,6 +13,7 @@ export function SongList({
   onPlay,
   isPlaybackLoading,
   activeSongId,
+  isPlaying,
 }: SongListProps) {
   return (
     <div className="songs-table-shell">
@@ -51,7 +53,9 @@ export function SongList({
                   disabled={isPlaybackLoading}
                 >
                   <span className="material-symbols-outlined fillable">
-                    {song.id === activeSongId ? 'pause_circle' : 'play_circle'}
+                    {song.id === activeSongId && isPlaying
+                      ? 'stop_circle'
+                      : 'play_circle'}
                   </span>
                 </button>
               </td>

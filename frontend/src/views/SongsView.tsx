@@ -12,6 +12,7 @@ type SongsViewProps = {
   onPlay: (songId: string) => void
   isPlaybackLoading: boolean
   activeSongId: string | null
+  isPlaying: boolean
 }
 
 export function SongsView({
@@ -24,6 +25,7 @@ export function SongsView({
   onPlay,
   isPlaybackLoading,
   activeSongId,
+  isPlaying,
 }: SongsViewProps) {
   return (
     <>
@@ -63,6 +65,7 @@ export function SongsView({
             onPlay={onPlay}
             isPlaybackLoading={isPlaybackLoading}
             activeSongId={activeSongId}
+            isPlaying={isPlaying}
           />
         )}
       </section>

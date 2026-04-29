@@ -7,6 +7,8 @@ type PlayerBarProps = {
   playbackLoading: boolean
   playbackError: string | null
   isPlaying: boolean
+  onAudioPlay: () => void
+  onAudioPause: () => void
   onStopPlayback: () => void
 }
 
@@ -16,6 +18,8 @@ export function PlayerBar({
   playbackLoading,
   playbackError,
   isPlaying,
+  onAudioPlay,
+  onAudioPause,
   onStopPlayback,
 }: PlayerBarProps) {
   return (
@@ -38,7 +42,12 @@ export function PlayerBar({
       </div>
 
       <div className="player-center">
-        <AudioPlayer audioUrl={audioUrl} onEnded={onStopPlayback} />
+        <AudioPlayer
+          audioUrl={audioUrl}
+          onPlay={onAudioPlay}
+          onPause={onAudioPause}
+          onEnded={onStopPlayback}
+        />
         {playbackLoading && <span className="player-status">Buffering audio...</span>}
         {playbackError && <span className="player-status player-status--error">{playbackError}</span>}
       </div>

@@ -34,6 +34,8 @@ function App() {
     isPlaying,
     startPlayback,
     stopPlayback,
+    markAudioPlaying,
+    markAudioStopped,
   } = usePlayback()
 
   const songListItems: SongListItem[] = serverSongs.map((song) => ({
@@ -80,6 +82,7 @@ function App() {
               onPlay={handlePlaySong}
               isPlaybackLoading={playbackLoading}
               activeSongId={currentSongId}
+              isPlaying={isPlaying}
             />
           )}
 
@@ -105,6 +108,8 @@ function App() {
           playbackLoading={playbackLoading}
           playbackError={playbackError}
           isPlaying={isPlaying}
+          onAudioPlay={markAudioPlaying}
+          onAudioPause={handleAudioPause}
           onStopPlayback={stopPlayback}
         />
       </div>
@@ -112,6 +117,11 @@ function App() {
   )
 
   async function handlePlaySong(songId: string) {
+    if (currentSongId === songId && isPlaying) {
+      await stopPlayback()
+      return
+    }
+
     const songToPlay = uiSongs.find((song) => song.id === songId)
 
     if (!songToPlay) {
@@ -119,6 +129,11 @@ function App() {
     }
 
     await startPlayback(songToPlay)
+  }
+
+  async function handleAudioPause() {
+    markAudioStopped()
+    await stopPlayback()
   }
 }
 

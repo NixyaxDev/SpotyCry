@@ -2,11 +2,19 @@ import { useEffect, useRef } from 'react'
 
 type AudioPlayerProps = {
   audioUrl: string | null
+  onPlay?: () => void
+  onPause?: () => void
   onEnded?: () => void
 }
 
-export function AudioPlayer({ audioUrl, onEnded }: AudioPlayerProps) {
+export function AudioPlayer({
+  audioUrl,
+  onPlay,
+  onPause,
+  onEnded,
+}: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const ignorePauseRef = useRef(false)
 
   useEffect(() => {
     if (!audioRef.current) {
@@ -14,9 +22,13 @@ export function AudioPlayer({ audioUrl, onEnded }: AudioPlayerProps) {
     }
 
     if (!audioUrl) {
+      ignorePauseRef.current = true
       audioRef.current.pause()
       audioRef.current.removeAttribute('src')
       audioRef.current.load()
+      window.setTimeout(() => {
+        ignorePauseRef.current = false
+      }, 0)
       return
     }
 
@@ -33,6 +45,16 @@ export function AudioPlayer({ audioUrl, onEnded }: AudioPlayerProps) {
       className="audio-player"
       controls
       src={audioUrl ?? undefined}
+      onPlay={onPlay}
+      onPause={() => {
+        if (
+          !ignorePauseRef.current &&
+          audioRef.current &&
+          audioRef.current.currentTime < audioRef.current.duration
+        ) {
+          onPause?.()
+        }
+      }}
       onEnded={onEnded}
     />
   )

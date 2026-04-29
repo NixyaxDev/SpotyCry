@@ -23,6 +23,8 @@ type PlaybackState = {
   isPlaying: boolean
   startPlayback: (song: Song) => Promise<void>
   stopPlayback: () => Promise<void>
+  markAudioPlaying: () => void
+  markAudioStopped: () => void
 }
 
 export function usePlayback(): PlaybackState {
@@ -120,7 +122,6 @@ export function usePlayback(): PlaybackState {
               objectUrlRef.current = nextAudioUrl
               setAudioUrl(nextAudioUrl)
               setLoading(false)
-              setIsPlaying(true)
               resolve()
             }
           }
@@ -215,6 +216,8 @@ export function usePlayback(): PlaybackState {
       isPlaying,
       startPlayback,
       stopPlayback,
+      markAudioPlaying,
+      markAudioStopped,
     }),
     [audioUrl, mimeType, loading, error, currentSongId, isPlaying],
   )
@@ -231,6 +234,15 @@ export function usePlayback(): PlaybackState {
     setCurrentSongId(null)
     setIsPlaying(false)
     streamIdRef.current = null
+  }
+
+  function markAudioPlaying() {
+    setIsPlaying(true)
+    setError(null)
+  }
+
+  function markAudioStopped() {
+    setIsPlaying(false)
   }
 }
 
